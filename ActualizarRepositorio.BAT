@@ -1,4 +1,4 @@
-esto para que es ? @echo off
+@echo off
 echo Actualizando el repositorio...
 cd /d "D:\Escritorio\proyecto-poo-github"
 git pull origin master
