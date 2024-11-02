@@ -1,3 +1,6 @@
+use MASTER
+go
+
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'BDCOLEGIO')
     CREATE DATABASE BDCOLEGIO;
 GO
