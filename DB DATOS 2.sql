@@ -23,33 +23,45 @@ VALUES
     (4, 'Secundaria', 550),
     (5, 'Secundaria', 600);
 
--- Insertar Año con fechas de inicio y fin personalizadas
+-- -- Insertar Año con fechas de inicio y fin personalizadas
 -- Fecha de inicio: Primer lunes de marzo
--- Fecha de fin: Viernes a mitad de diciembre
+-- Fecha de fin: Segundo viernes de diciembre
 
 DECLARE @anio INT = 2023;
 WHILE @anio <= 2024
 BEGIN
     -- Calcular el primer lunes de marzo
-    DECLARE @anio_inicio DATE = DATEADD(WEEK, DATEDIFF(WEEK, 0, DATEFROMPARTS(@anio, 3, 1)), 1);
+    DECLARE @anio_inicio DATE = DATEADD(DAY, 
+        (9 - DATEPART(WEEKDAY, DATEFROMPARTS(@anio, 3, 1))) % 7, -- Calcula el desfase para el primer lunes
+        DATEFROMPARTS(@anio, 3, 1) -- Fecha base: 1 de marzo
+    );
 
-    -- Calcular un viernes en la segunda semana de diciembre
-    DECLARE @anio_fin DATE = DATEADD(DAY, 11, DATEFROMPARTS(@anio, 12, 1));
-    
+    -- Calcular el segundo viernes de diciembre
+    DECLARE @anio_fin DATE = DATEADD(DAY, 
+        (5 - DATEPART(WEEKDAY, DATEFROMPARTS(@anio, 12, 1)) + 7) % 7 + 7, -- Calcula el desfase para el segundo viernes
+        DATEFROMPARTS(@anio, 12, 1) -- Fecha base: 1 de diciembre
+    );
+
+    -- Insertar el año y las fechas calculadas en la tabla
     INSERT INTO ANIO (anio_id, anio_inicio, anio_fin)
     VALUES 
         (@anio, @anio_inicio, @anio_fin);
 
+    -- Incrementar el año para la próxima iteración
     SET @anio = @anio + 1;
 END;
+
 
 -- Insertar Secciones para 2023
 DECLARE @grad_id INT = 1;
 WHILE @grad_id <= 11
 BEGIN
+    -- Insertar secciones A, B y C para cada grad_id
     INSERT INTO SECCION (anio_id, grad_id, sec_nombre, sec_vacantes, sec_matriculados)
     VALUES 
-        (2023, @grad_id, 'A', 30, 10);
+        (2023, @grad_id, 'A', 30, 10),
+        (2023, @grad_id, 'B', 30, 10),
+        (2023, @grad_id, 'C', 30, 10);
     SET @grad_id = @grad_id + 1;
 END;
 
@@ -57,9 +69,12 @@ END;
 SET @grad_id = 1;
 WHILE @grad_id <= 11
 BEGIN
+    -- Insertar secciones A, B y C para cada grad_id
     INSERT INTO SECCION (anio_id, grad_id, sec_nombre, sec_vacantes, sec_matriculados)
     VALUES 
-        (2024, @grad_id, 'A', 30, 0);
+        (2024, @grad_id, 'A', 30, 0),
+        (2024, @grad_id, 'B', 30, 0),
+        (2024, @grad_id, 'C', 30, 0);
     SET @grad_id = @grad_id + 1;
 END;
 
@@ -211,52 +226,52 @@ BEGIN
     SET @grad_id = @grad_id + 1;
 END;
 
--- Insertar Alumnos
+-- Insertar Alumnos con teléfonos más realistas
 INSERT INTO ALUMNO (alu_apellido, alu_nombre, alu_direccion, alu_telefono)
 VALUES 
-    ('Perez', 'Juan', 'Av. Siempre Viva 123', '987654321'),
-    ('Gomez', 'Maria', 'Calle Falsa 456', '987654322'),
-    ('Lopez', 'Carlos', 'Jr. Primavera 789', '987654323'),
-    ('Rodriguez', 'Ana', 'Av. Los Rosales 321', '987654324'),
-    ('Martinez', 'Jose', 'Calle Los Olivos 654', '987654325'),
-    ('Garcia', 'Luis', 'Jr. Lima 123', '987654326'),
-    ('Hernandez', 'Claudia', 'Av. Tupac Amaru 456', '987654327'),
-    ('Torres', 'Rosa', 'Jr. Ayacucho 789', '987654328'),
-    ('Sanchez', 'Pedro', 'Av. Grau 321', '987654329'),
-    ('Diaz', 'Elena', 'Calle Central 654', '987654330');
+    ('Perez', 'Juan', 'Av. Siempre Viva 123', '984731256'),
+    ('Gomez', 'Maria', 'Calle Falsa 456', '972643851'),
+    ('Lopez', 'Carlos', 'Jr. Primavera 789', '953172684'),
+    ('Rodriguez', 'Ana', 'Av. Los Rosales 321', '968234715'),
+    ('Martinez', 'Jose', 'Calle Los Olivos 654', '987415263'),
+    ('Garcia', 'Luis', 'Jr. Lima 123', '945362178'),
+    ('Hernandez', 'Claudia', 'Av. Tupac Amaru 456', '962487315'),
+    ('Torres', 'Rosa', 'Jr. Ayacucho 789', '976543218'),
+    ('Sanchez', 'Pedro', 'Av. Grau 321', '953267481'),
+    ('Diaz', 'Elena', 'Calle Central 654', '987354621');
 
--- Insertar Empleados con contraseñas en formato 000001, 000002, etc.
+-- Insertar Empleados con direcciones más realistas y usuarios que combinan letras de nombres y apellidos
 INSERT INTO EMPLEADO (emp_apellido, emp_nombre, emp_direccion, emp_email, emp_usuario, emp_clave)
 VALUES 
-    ('Gomez', 'Carlos', 'Calle 123', 'carlos@colegio.com', 'carlos', '000001'),
-    ('Lopez', 'Ana', 'Calle 456', 'ana@colegio.com', 'ana', '000002'),
-    ('Martinez', 'Pedro', 'Calle 789', 'pedro@colegio.com', 'pedro', '000003'),
-    ('Fernandez', 'Lucia', 'Calle 101', 'lucia@colegio.com', 'lucia', '000004'),
-    ('Sanchez', 'Jorge', 'Calle 202', 'jorge@colegio.com', 'jorge', '000005');
+    ('Gomez', 'Carlos', 'Av. Los Cedros 145', 'carlos@colegio.com', 'cgomez', '92837465'),
+    ('Lopez', 'Ana', 'Jr. La Esperanza 231', 'ana@colegio.com', 'alopez', '73529184'),
+    ('Martinez', 'Pedro', 'Calle Los Tulipanes 678', 'pedro@colegio.com', 'pmartinez', '18273645'),
+    ('Fernandez', 'Lucia', 'Av. Los Pinos 321', 'lucia@colegio.com', 'lfernandez', '64739281'),
+    ('Sanchez', 'Jorge', 'Jr. Los Rosales 555', 'jorge@colegio.com', 'jsanchez', '53928471');
 
--- Insertar Profesores con nombres y apellidos específicos y DNIs de 8 dígitos
+-- Insertar Profesores con nombres y apellidos específicos y DNIs de 8 dígitos y teléfonos más realistas
 INSERT INTO PROFESOR (prof_apellido, prof_nombre, prof_dni, prof_direccion, prof_email, prof_telefono)
 VALUES 
-    ('Ramirez', 'Alberto', '10000001', 'Calle Los Sauces 123', 'ramirez.alberto@colegio.com', '987654331'),
-    ('Quispe', 'Marta', '10000002', 'Av. Las Flores 456', 'quispe.marta@colegio.com', '987654332'),
-    ('Castro', 'Julia', '10000003', 'Jr. Pinos 789', 'castro.julia@colegio.com', '987654333'),
-    ('Salazar', 'Fernando', '10000004', 'Av. San Juan 321', 'salazar.fernando@colegio.com', '987654334'),
-    ('Rojas', 'Ines', '10000005', 'Calle Sol 654', 'rojas.ines@colegio.com', '987654335'),
-    ('Mendoza', 'Pablo', '10000006', 'Jr. Lirios 123', 'mendoza.pablo@colegio.com', '987654336'),
-    ('Paredes', 'Luz', '10000007', 'Av. Olivos 456', 'paredes.luz@colegio.com', '987654337'),
-    ('Chavez', 'Andres', '10000008', 'Jr. Palmeras 789', 'chavez.andres@colegio.com', '987654338'),
-    ('Vega', 'Carmen', '10000009', 'Calle Los Alamos 321', 'vega.carmen@colegio.com', '987654339'),
-    ('Ortega', 'Luis', '10000010', 'Av. Nogales 654', 'ortega.luis@colegio.com', '987654340'),
-    ('Navarro', 'Silvia', '10000011', 'Calle Azucenas 123', 'navarro.silvia@colegio.com', '987654341'),
-    ('Reyes', 'Ricardo', '10000012', 'Av. Jazmines 456', 'reyes.ricardo@colegio.com', '987654342'),
-    ('Gutierrez', 'Angela', '10000013', 'Jr. Rosas 789', 'gutierrez.angela@colegio.com', '987654343'),
-    ('Valdez', 'Mario', '10000014', 'Av. Sauce 321', 'valdez.mario@colegio.com', '987654344'),
-    ('Escobar', 'Patricia', '10000015', 'Calle Lima 654', 'escobar.patricia@colegio.com', '987654345'),
-    ('Rios', 'Hugo', '10000016', 'Av. Central 123', 'rios.hugo@colegio.com', '987654346'),
-    ('Figueroa', 'Celia', '10000017', 'Jr. Esperanza 456', 'figueroa.celia@colegio.com', '987654347'),
-    ('Villanueva', 'Raul', '10000018', 'Calle Nueva 789', 'villanueva.raul@colegio.com', '987654348'),
-    ('Acosta', 'Blanca', '10000019', 'Av. Los Heroes 321', 'acosta.blanca@colegio.com', '987654349'),
-    ('Ruiz', 'Eduardo', '10000020', 'Jr. Alameda 654', 'ruiz.eduardo@colegio.com', '987654350');
+    ('Ramirez', 'Alberto', '72456391', 'Calle Los Sauces 123', 'ramirez.alberto@colegio.com', '987643201'),
+    ('Quispe', 'Marta', '81234567', 'Av. Las Flores 456', 'quispe.marta@colegio.com', '912354678'),
+    ('Castro', 'Julia', '76543210', 'Jr. Pinos 789', 'castro.julia@colegio.com', '945672389'),
+    ('Salazar', 'Fernando', '63527182', 'Av. San Juan 321', 'salazar.fernando@colegio.com', '976823491'),
+    ('Rojas', 'Ines', '85341297', 'Calle Sol 654', 'rojas.ines@colegio.com', '984561230'),
+    ('Mendoza', 'Pablo', '72458963', 'Jr. Lirios 123', 'mendoza.pablo@colegio.com', '987345621'),
+    ('Paredes', 'Luz', '83725491', 'Av. Olivos 456', 'paredes.luz@colegio.com', '944567283'),
+    ('Chavez', 'Andres', '61235478', 'Jr. Palmeras 789', 'chavez.andres@colegio.com', '972345678'),
+    ('Vega', 'Carmen', '79243865', 'Calle Los Alamos 321', 'vega.carmen@colegio.com', '953217846'),
+    ('Ortega', 'Luis', '63421587', 'Av. Nogales 654', 'ortega.luis@colegio.com', '987312549'),
+    ('Navarro', 'Silvia', '81243657', 'Calle Azucenas 123', 'navarro.silvia@colegio.com', '961243578'),
+    ('Reyes', 'Ricardo', '72536419', 'Av. Jazmines 456', 'reyes.ricardo@colegio.com', '975312486'),
+    ('Gutierrez', 'Angela', '84321765', 'Jr. Rosas 789', 'gutierrez.angela@colegio.com', '982435617'),
+    ('Valdez', 'Mario', '76231458', 'Av. Sauce 321', 'valdez.mario@colegio.com', '956213487'),
+    ('Escobar', 'Patricia', '69231485', 'Calle Lima 654', 'escobar.patricia@colegio.com', '968245316'),
+    ('Rios', 'Hugo', '78245639', 'Av. Central 123', 'rios.hugo@colegio.com', '943215867'),
+    ('Figueroa', 'Celia', '84123765', 'Jr. Esperanza 456', 'figueroa.celia@colegio.com', '967432815'),
+    ('Villanueva', 'Raul', '65421378', 'Calle Nueva 789', 'villanueva.raul@colegio.com', '953278416'),
+    ('Acosta', 'Blanca', '73241568', 'Av. Los Heroes 321', 'acosta.blanca@colegio.com', '986345127'),
+    ('Ruiz', 'Eduardo', '82134675', 'Jr. Alameda 654', 'ruiz.eduardo@colegio.com', '958214637');
 
 -- Insertar Matrículas (solo 3 alumnos matriculados)
 INSERT INTO MATRICULA (alu_id, sec_id, emp_id, mat_fecha, mat_precio, mat_estado)
@@ -295,22 +310,4 @@ BEGIN
     VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad);
 
     SET @mat_id = @mat_id + 1;
-END;
-
--- Insertar Sección Curso (relacionar secciones con cursos y profesores)
-DECLARE @sec_id INT = 1;
-DECLARE @prof_id INT = 1;
-DECLARE @cur_id INT = 1;
-WHILE @sec_id <= 11
-BEGIN
-    SET @cur_id = (SELECT MIN(cur_id) FROM CURSO WHERE grad_id = (SELECT grad_id FROM SECCION WHERE sec_id = @sec_id));
-    WHILE @cur_id IS NOT NULL
-    BEGIN
-        INSERT INTO SECCION_CURSO (sec_id, cur_id, prof_id)
-        VALUES 
-            (@sec_id, @cur_id, @prof_id);
-        SET @cur_id = (SELECT MIN(cur_id) FROM CURSO WHERE grad_id = (SELECT grad_id FROM SECCION WHERE sec_id = @sec_id) AND cur_id > @cur_id);
-    END;
-    SET @prof_id = @prof_id + 1;
-    SET @sec_id = @sec_id + 1;
 END;
