@@ -45,7 +45,14 @@ BEGIN
     VALUES 
         (2023, @grad_id, 'A', 30, 0),
         (2023, @grad_id, 'B', 30, 0),
-        (2023, @grad_id, 'C', 30, 0),
+        (2023, @grad_id, 'C', 30, 0);
+    SET @grad_id = @grad_id + 1;
+END;
+SET @grad_id = 1;
+WHILE @grad_id <= 11
+BEGIN
+    INSERT INTO SECCION (anio_id, grad_id, sec_nombre, sec_vacantes, sec_matriculados)
+    VALUES 
         (2024, @grad_id, 'A', 30, 0),
         (2024, @grad_id, 'B', 30, 0),
         (2024, @grad_id, 'C', 30, 0);
@@ -58,7 +65,7 @@ SET @grad_id = 1;
 -- Cursos para cada grado de Primaria (1 a 6)
 WHILE @grad_id <= 6
 BEGIN
-    IF @grad_id = 1
+    IF @grad_id%6 = 1
     BEGIN
         INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
             (@grad_id, 'Personal Social'),

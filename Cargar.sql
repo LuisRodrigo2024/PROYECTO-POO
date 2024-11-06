@@ -49,7 +49,7 @@ BEGIN
     SET @grad_id = @grad_id + 1;
 END;
 
-SET @grad_id INT = 1;
+SET @grad_id = 1;
 WHILE @grad_id <= 11
 BEGIN
     INSERT INTO SECCION (anio_id, grad_id, sec_nombre, sec_vacantes, sec_matriculados)
@@ -66,8 +66,6 @@ SET @grad_id = 1;
 -- Cursos para cada grado de Primaria (1 a 6)
 WHILE @grad_id <= 6
 BEGIN
-    IF @grad_id = 1
-    BEGIN
         INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
             (@grad_id, 'Personal Social'),
             (@grad_id, 'Ingles'),
@@ -78,72 +76,6 @@ BEGIN
             (@grad_id, 'Comunicacion'),
             (@grad_id, 'Razonamiento Matematico'),
             (@grad_id, 'Religion');
-    END
-    ELSE IF @grad_id = 2
-    BEGIN
-        INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
-            (@grad_id, 'Personal Social'),
-            (@grad_id, 'Ciencia y Tecnologia'),
-            (@grad_id, 'Razonamiento Verbal'),
-            (@grad_id, 'Comunicacion'),
-            (@grad_id, 'Religion'),
-            (@grad_id, 'Matematicas'),
-            (@grad_id, 'Ingles'),
-            (@grad_id, 'Computo'),
-            (@grad_id, 'Razonamiento Matematico');
-    END
-    ELSE IF @grad_id = 3
-    BEGIN
-        INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
-            (@grad_id, 'Ciencia y Tecnologia'),
-            (@grad_id, 'Personal Social'),
-            (@grad_id, 'Computo'),
-            (@grad_id, 'Razonamiento Verbal'),
-            (@grad_id, 'Comunicacion'),
-            (@grad_id, 'Ingles'),
-            (@grad_id, 'Religion'),
-            (@grad_id, 'Matematicas'),
-            (@grad_id, 'Razonamiento Matematico');
-    END
-    ELSE IF @grad_id = 4
-    BEGIN
-        INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
-            (@grad_id, 'Ingles'),
-            (@grad_id, 'Ciencia y Tecnologia'),
-            (@grad_id, 'Matematicas'),
-            (@grad_id, 'Computo'),
-            (@grad_id, 'Religion'),
-            (@grad_id, 'Razonamiento Verbal'),
-            (@grad_id, 'Comunicacion'),
-            (@grad_id, 'Razonamiento Matematico'),
-            (@grad_id, 'Personal Social');
-    END
-    ELSE IF @grad_id = 5
-    BEGIN
-        INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
-            (@grad_id, 'Personal Social'),
-            (@grad_id, 'Razonamiento Matematico'),
-            (@grad_id, 'Computo'),
-            (@grad_id, 'Comunicacion'),
-            (@grad_id, 'Razonamiento Verbal'),
-            (@grad_id, 'Matematicas'),
-            (@grad_id, 'Religion'),
-            (@grad_id, 'Ingles'),
-            (@grad_id, 'Ciencia y Tecnologia');
-    END
-    ELSE IF @grad_id = 6
-    BEGIN
-        INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
-            (@grad_id, 'Razonamiento Matematico'),
-            (@grad_id, 'Razonamiento Verbal'),
-            (@grad_id, 'Comunicacion'),
-            (@grad_id, 'Ciencia y Tecnologia'),
-            (@grad_id, 'Computo'),
-            (@grad_id, 'Personal Social'),
-            (@grad_id, 'Matematicas'),
-            (@grad_id, 'Religion'),
-            (@grad_id, 'Ingles');
-    END
     SET @grad_id = @grad_id + 1;
 END;
 
