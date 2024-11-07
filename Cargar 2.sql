@@ -260,15 +260,21 @@ BEGIN
         SET @mensualidad = 0;
     END
 
-    -- Primer mes (último día de marzo)
-    SET @pag_fecha = EOMONTH('2023-03-01');
+    -- Pago de la matricula (último día de febrero)
+    SET @pag_fecha = EOMONTH('2023-02-01');
     SET @pag_cuota = 1;
     INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe)
     VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad);
 
-    -- Segundo mes (último día de abril)
-    SET @pag_fecha = EOMONTH('2023-04-01');
+    -- Primer mes (último día de marzo)
+    SET @pag_fecha = EOMONTH('2023-03-01');
     SET @pag_cuota = 2;
+    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe)
+    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad);
+
+	-- Segundo mes (último día de abril)
+    SET @pag_fecha = EOMONTH('2023-04-01');
+    SET @pag_cuota = 3;
     INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe)
     VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad);
 

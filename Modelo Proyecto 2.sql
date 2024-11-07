@@ -88,9 +88,9 @@ CREATE TABLE PAGO (
     pag_id INT PRIMARY KEY IDENTITY(1,1),
     mat_id INT NOT NULL,
     emp_id INT NOT NULL,
+	pag_pension INT NOT NULL,
+	pag_importe DECIMAL(10,2) NOT NULL,
     pag_fecha DATETIME NOT NULL,
-    pag_pension INT NOT NULL,
-    pag_importe DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (mat_id) REFERENCES MATRICULA(mat_id),
     FOREIGN KEY (emp_id) REFERENCES EMPLEADO(emp_id)
 );
