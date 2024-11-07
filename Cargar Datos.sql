@@ -9,25 +9,20 @@ VALUES
     ('administrativo', '0003', 'ADMINISTRATIVO', 'administrativo@colegio.com');
 
 -- Insertar en PRECIO
-INSERT INTO PRECIO (nivel, mensualidad) 
+INSERT INTO PRECIO (mensualidad) 
 VALUES 
-	('PRIMARIA', 400),
-	('SECUNDARIA', 500);
+    (400.00);
+
 
 -- Insertar Grados
-INSERT INTO GRADO (grad_numero, grad_nivel)
+INSERT INTO GRADO (grad_id)
 VALUES 
-    (1, 'PRIMARIA'),
-    (2, 'PRIMARIA'),
-    (3, 'PRIMARIA'),
-    (4, 'PRIMARIA'),
-    (5, 'PRIMARIA'),
-    (6, 'PRIMARIA'),
-    (1, 'SECUNDARIA'),
-    (2, 'SECUNDARIA'),
-    (3, 'SECUNDARIA'),
-    (4, 'SECUNDARIA'),
-    (5, 'SECUNDARIA');
+    (1),
+    (2),
+    (3),
+    (4),
+    (5),
+    (6);
 
 -- Insertar Anios
 DECLARE @anio INT = 2023;
@@ -45,24 +40,22 @@ END;
 
 -- Insertar Secciones asegurando que sec_vacantes y sec_matriculados sumen 30
 DECLARE @grad_id INT = 1;
-WHILE @grad_id <= 11
+WHILE @grad_id <= 6
 BEGIN
     INSERT INTO SECCION (anio_id, grad_id, sec_nombre, sec_vacantes, sec_matriculados)
     VALUES 
         (2023, @grad_id, 'A', 30, 0),
-        (2023, @grad_id, 'B', 30, 0),
-        (2023, @grad_id, 'C', 30, 0);
+        (2023, @grad_id, 'B', 30, 0)
     SET @grad_id = @grad_id + 1;
 END;
 
 SET @grad_id = 1;
-WHILE @grad_id <= 11
+WHILE @grad_id <= 6
 BEGIN
     INSERT INTO SECCION (anio_id, grad_id, sec_nombre, sec_vacantes, sec_matriculados)
     VALUES 
         (2024, @grad_id, 'A', 30, 0),
-        (2024, @grad_id, 'B', 30, 0),
-        (2024, @grad_id, 'C', 30, 0);
+        (2024, @grad_id, 'B', 30, 0)
     SET @grad_id = @grad_id + 1;
 END;
 
@@ -73,79 +66,17 @@ SET @grad_id = 1;
 WHILE @grad_id <= 6
 BEGIN
         INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
-            (@grad_id, 'PERSONAL SOCIAL'),
-            (@grad_id, 'INGLES'),
-            (@grad_id, 'CIENCIA Y TECNOLOGIA'),
-            (@grad_id, 'COMPUTO'),
+            (@grad_id, 'COMUNICACION'),
             (@grad_id, 'RAZONAMIENTO VERBAL'),
             (@grad_id, 'MATEMATICAS'),
-            (@grad_id, 'COMUNICACION'),
             (@grad_id, 'RAZONAMIENTO MATEMATICO'),
-            (@grad_id, 'RELIGION');
+            (@grad_id, 'INGLES'),
+            (@grad_id, 'PERSONAL SOCIAL'),
+            (@grad_id, 'RELIGION'),
+            (@grad_id, 'CIENCIA Y TECNOLOGIA'),
+            (@grad_id, 'COMPUTO');
     SET @grad_id = @grad_id + 1;
 END;
-
--- Cursos para cada grado de Secundaria (1 a 5)
-SET @grad_id = 7;
-WHILE @grad_id <= 11
-BEGIN
-    IF @grad_id = 7
-    BEGIN
-        INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
-            (@grad_id, 'ALGEBRA'),
-            (@grad_id, 'ARITMETICA'),
-            (@grad_id, 'BIOLOGIA'),
-            (@grad_id, 'FISICA'),
-            (@grad_id, 'QUIMICA'),
-            (@grad_id, 'RAZONAMIENTO VERBAL'),
-            (@grad_id, 'GEOGRAFIA'),
-            (@grad_id, 'HISTORIA DEL PERU'),
-            (@grad_id, 'LITERATURA'),
-            (@grad_id, 'LENGUA'),
-            (@grad_id, 'RAZONAMIENTO MATEMATICO'),
-            (@grad_id, 'HISTORIA UNIVERSAL'),
-            (@grad_id, 'GEOMETRIA'),
-            (@grad_id, 'INGLES');
-    END
-    ELSE IF @grad_id = 8 OR @grad_id = 9 OR @grad_id = 10
-    BEGIN
-        INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
-            (@grad_id, 'ALGEBRA'),
-            (@grad_id, 'ARITMETICA'),
-            (@grad_id, 'BIOLOGIA'),
-            (@grad_id, 'FISICA'),
-            (@grad_id, 'QUIMICA'),
-            (@grad_id, 'RAZONAMIENTO VERBAL'),
-            (@grad_id, 'GEOGRAFIA'),
-            (@grad_id, 'HISTORIA DEL PERU'),
-            (@grad_id, 'LITERATURA'),
-            (@grad_id, 'LENGUA'),
-            (@grad_id, 'RAZONAMIENTO MATEMATICO'),
-            (@grad_id, 'HISTORIA UNIVERSAL'),
-            (@grad_id, 'GEOMETRIA'),
-            (@grad_id, 'INGLES');
-    END
-    ELSE IF @grad_id = 11
-    BEGIN
-        INSERT INTO CURSO (grad_id, cur_nombre) VALUES 
-            (@grad_id, 'GEOMETRIA'),
-            (@grad_id, 'QUIMICA'),
-            (@grad_id, 'RAZONAMIENTO MATEMATICO'),
-            (@grad_id, 'LITERATURA'),
-            (@grad_id, 'HISTORIA UNIVERSAL'),
-            (@grad_id, 'BIOLOGIA'),
-            (@grad_id, 'ECONOMIA'),
-            (@grad_id, 'HISTORIA DEL PERU'),
-            (@grad_id, 'LENGUA'),
-            (@grad_id, 'TRIGONOMETRIA'),
-            (@grad_id, 'FISICA'),
-            (@grad_id, 'ARITMETICA'),
-            (@grad_id, 'ALGEBRA'),
-            (@grad_id, 'INGLES');
-    END
-    SET @grad_id = @grad_id + 1;
-END;
-
 
 -- Crear Trigger para actualizar vacantes y matriculados en cada seccion
 GO
@@ -239,6 +170,13 @@ VALUES
     (2, 2, 1, 'REGULAR', '2023-03-01', 400, 'Activo'),
     (3, 3, 1, 'REGULAR', '2023-03-01', 400, 'Activo');
 
+-- Insertar tipos de pago en la tabla TIPO_PAGO
+INSERT INTO TIPO_PAGO (nombre)
+VALUES 
+    ('Matricula'),
+    ('Pension');
+
+
 -- Insertar Pagos asegurando que pag_importe no sea NULL
 DECLARE @mat_id INT = 1;
 DECLARE @pag_fecha DATE;
@@ -247,36 +185,44 @@ DECLARE @mensualidad DECIMAL(10,2);
 
 WHILE @mat_id <= 3
 BEGIN
-    -- Obtener la mensualidad de acuerdo al nivel de la sección del alumno
-    SELECT @mensualidad = p.mensualidad 
-    FROM PRECIO p
-    JOIN GRADO g ON g.grad_nivel = p.nivel
-    JOIN SECCION s ON s.grad_id = g.grad_id
-    WHERE s.sec_id = (SELECT sec_id FROM MATRICULA WHERE mat_id = @mat_id);
+    -- Obtener la mensualidad desde la tabla PRECIO
+    -- Si no se encuentra un valor, asignar 0 como valor predeterminado.
+    SELECT TOP 1 @mensualidad = COALESCE(mensualidad, 0) 
+    FROM PRECIO;
 
-    -- Si @mensualidad es NULL, asignarle un valor predeterminado (por ejemplo, 0)
-    IF @mensualidad IS NULL
-    BEGIN
-        SET @mensualidad = 0;
-    END
-
-    -- Pago de la matricula (último día de febrero)
+    -- Pago de la matrícula (último día de febrero)
     SET @pag_fecha = EOMONTH('2023-02-01');
     SET @pag_cuota = 1;
-    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe)
-    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad);
+    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe, tipo_pago_id)
+    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad, 1); -- tipo_pago_id = 1 para matrícula
 
     -- Primer mes (último día de marzo)
     SET @pag_fecha = EOMONTH('2023-03-01');
     SET @pag_cuota = 2;
-    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe)
-    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad);
+    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe, tipo_pago_id)
+    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad, 2); -- tipo_pago_id = 2 para pagos mensuales
 
-	-- Segundo mes (último día de abril)
+    -- Segundo mes (último día de abril)
     SET @pag_fecha = EOMONTH('2023-04-01');
     SET @pag_cuota = 3;
-    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe)
-    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad);
+    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe, tipo_pago_id)
+    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad, 2); -- tipo_pago_id = 2 para pagos mensuales
 
+    -- Incremento de mat_id para el siguiente ciclo
     SET @mat_id = @mat_id + 1;
 END;
+
+-- Inserciones simplificadas en SECCION_CURSO
+INSERT INTO SECCION_CURSO (sec_id, cur_id, prof_id) VALUES 
+    (1, 1, 1), (1, 2, 1), (1, 3, 5), (1, 4, 5), (1, 5, 9), (1, 6, 11), (1, 7, 11), (1, 8, 15), (1, 9, 18),
+    (2, 1, 1), (2, 2, 1), (2, 3, 5), (2, 4, 5), (2, 5, 9), (2, 6, 11), (2, 7, 11), (2, 8, 15), (2, 9, 18),
+    (3, 10, 1), (3, 11, 1), (3, 12, 5), (3, 13, 5), (3, 14, 9), (3, 15, 11), (3, 16, 11), (3, 17, 15), (3, 18, 18),
+    (4, 10, 2), (4, 11, 2), (4, 12, 6), (4, 13, 6), (4, 14, 9), (4, 15, 12), (4, 16, 12), (4, 17, 15), (4, 18, 18),
+    (5, 19, 2), (5, 20, 2), (5, 21, 6), (5, 22, 6), (5, 23, 9), (5, 24, 12), (5, 25, 12), (5, 26, 16), (5, 27, 18),
+    (6, 19, 2), (6, 20, 2), (6, 21, 6), (6, 22, 6), (6, 23, 9), (6, 24, 12), (6, 25, 12), (6, 26, 16), (6, 27, 18),
+    (7, 28, 3), (7, 29, 3), (7, 30, 7), (7, 31, 7), (7, 32, 10), (7, 33, 13), (7, 34, 13), (7, 35, 16), (7, 36, 19),
+    (8, 28, 3), (8, 29, 3), (8, 30, 7), (8, 31, 7), (8, 32, 10), (8, 33, 13), (8, 34, 13), (8, 35, 16), (8, 36, 19),
+    (9, 37, 3), (9, 38, 3), (9, 39, 7), (9, 40, 7), (9, 41, 10), (9, 42, 13), (9, 43, 13), (9, 44, 17), (9, 45, 19),
+    (10, 37, 4), (10, 38, 4), (10, 39, 8), (10, 40, 8), (10, 41, 10), (10, 42, 14), (10, 43, 14), (10, 44, 17), (10, 45, 19),
+    (11, 46, 4), (11, 47, 4), (11, 48, 8), (11, 49, 8), (11, 50, 10), (11, 51, 14), (11, 52, 14), (11, 53, 17), (11, 54, 19),
+    (12, 46, 4), (12, 47, 4), (12, 48, 8), (12, 49, 8), (12, 50, 10), (12, 51, 14), (12, 52, 14), (12, 53, 17), (12, 54, 19);
