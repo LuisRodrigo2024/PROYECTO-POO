@@ -4,9 +4,9 @@ GO
 -- Insertar Usuarios con contrasenas en formato 0001, 0002, 0003, etc.
 INSERT INTO USUARIO (nombre_usuario, contrasena, rol, correo_electronico)
 VALUES 
-    ('director', '0001', 'director', 'director@colegio.com'),
-    ('subdirector', '0002', 'subdirector', 'subdirector@colegio.com'),
-    ('administrativo', '0003', 'administrativo', 'administrativo@colegio.com');
+    ('DIRECTOR', '0001', 'director', 'director@colegio.com'),
+    ('SUBDIRECTOR', '0002', 'subdirector', 'subdirector@colegio.com'),
+    ('ADMINISTRATIVO', '0003', 'administrativo', 'administrativo@colegio.com');
 
 -- Insertar Grados
 INSERT INTO GRADO (grad_numero, grad_nivel, grad_mensualidad)

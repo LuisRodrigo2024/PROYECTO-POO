@@ -1,4 +1,4 @@
-USE MASTER
+USE MASTER 
 GO
 
 IF NOT EXISTS (SELECT NAME FROM sys.databases WHERE NAME = 'BDCOLEGIO')
@@ -11,16 +11,21 @@ GO
 -- Tabla ANIO
 CREATE TABLE ANIO (
     anio_id INT PRIMARY KEY,
-    anio_inicio DATETIME  NOT NULL,
-    anio_fin DATETIME  NOT NULL
+    anio_inicio DATETIME NOT NULL,
+    anio_fin DATETIME NOT NULL
 );
 
 -- Tabla GRADO
 CREATE TABLE GRADO (
     grad_id INT PRIMARY KEY IDENTITY(1,1),
     grad_numero INT NOT NULL,
-    grad_nivel VARCHAR(10) CHECK (grad_nivel IN ('PRIMARIA', 'SECUNDARIA')),
-    grad_mensualidad DECIMAL(10,2) NOT NULL
+    grad_nivel VARCHAR(10) CHECK (grad_nivel IN ('PRIMARIA', 'SECUNDARIA'))
+);
+
+-- Tabla PRECIO
+CREATE TABLE PRECIO (
+    nivel VARCHAR(10) UNIQUE CHECK (nivel IN ('PRIMARIA', 'SECUNDARIA')),
+    mensualidad DECIMAL(10,2) NOT NULL
 );
 
 -- Tabla SECCION
@@ -66,12 +71,12 @@ CREATE TABLE EMPLEADO (
 -- Tabla MATRICULA
 CREATE TABLE MATRICULA (
     mat_id INT PRIMARY KEY IDENTITY(1,1),
-	sec_id INT NOT NULL,
+    sec_id INT NOT NULL,
     alu_id INT NOT NULL,
     emp_id INT NOT NULL,
-	mat_tipo VARCHAR(10),
+    mat_tipo VARCHAR(10),
     CONSTRAINT chk_matricula_tipo CHECK (mat_tipo IN ('REGULAR', 'BECA', 'MEDIABECA')),
-    mat_fecha DATETIME  NOT NULL,
+    mat_fecha DATETIME NOT NULL,
     mat_precio DECIMAL(10,2) NOT NULL,
     mat_estado VARCHAR(10) CHECK (mat_estado IN ('Activo', 'Retirado')),
     FOREIGN KEY (alu_id) REFERENCES ALUMNO(alu_id),
@@ -147,6 +152,3 @@ CREATE TABLE USUARIO (
     ultimo_acceso DATETIME,
     estado_activo BIT DEFAULT 1
 );
-
-
-

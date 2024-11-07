@@ -8,20 +8,26 @@ VALUES
     ('subdirector', '0002', 'SUBDIRECTOR', 'subdirector@colegio.com'),
     ('administrativo', '0003', 'ADMINISTRATIVO', 'administrativo@colegio.com');
 
--- Insertar Grados
-INSERT INTO GRADO (grad_numero, grad_nivel, grad_mensualidad)
+-- Insertar en PRECIO
+INSERT INTO PRECIO (nivel, mensualidad) 
 VALUES 
-    (1, 'PRIMARIA', 200),
-    (2, 'PRIMARIA', 225),
-    (3, 'PRIMARIA', 250),
-    (4, 'PRIMARIA', 275),
-    (5, 'PRIMARIA', 300),
-    (6, 'PRIMARIA', 325),
-    (1, 'SECUNDARIA', 400),
-    (2, 'SECUNDARIA', 450),
-    (3, 'SECUNDARIA', 500),
-    (4, 'SECUNDARIA', 550),
-    (5, 'SECUNDARIA', 600);
+	('PRIMARIA', 400),
+	('SECUNDARIA', 500);
+
+-- Insertar Grados
+INSERT INTO GRADO (grad_numero, grad_nivel)
+VALUES 
+    (1, 'PRIMARIA'),
+    (2, 'PRIMARIA'),
+    (3, 'PRIMARIA'),
+    (4, 'PRIMARIA'),
+    (5, 'PRIMARIA'),
+    (6, 'PRIMARIA'),
+    (1, 'SECUNDARIA'),
+    (2, 'SECUNDARIA'),
+    (3, 'SECUNDARIA'),
+    (4, 'SECUNDARIA'),
+    (5, 'SECUNDARIA');
 
 -- Insertar Anios
 DECLARE @anio INT = 2023;
@@ -201,7 +207,7 @@ VALUES
     ('FERNANDEZ CASTRO', 'LUCIA CAROLINA', 'Av. Los Pinos 321', 'lucia@colegio.com', 'lfernandez', '64739281'),
     ('SANCHEZ RAMIREZ', 'JORGE', 'Jr. Los Rosales 555', 'jorge@colegio.com', 'jsanchez', '53928471');
 
--- Insertar Profesores con nombres y apellidos en mayÃºsculas y DNIs de 8 dÃ­gitos
+-- Insertar Profesores con nombres y apellidos en mayúsculas y DNIs de 8 dígitos
 INSERT INTO PROFESOR (prof_apellido, prof_nombre, prof_dni, prof_direccion, prof_email, prof_telefono)
 VALUES 
     ('RAMIREZ GUTIERREZ', 'ALBERTO', '72456391', 'Calle Los Sauces 123', 'ramirez.alberto@colegio.com', '987643201'),
@@ -226,12 +232,12 @@ VALUES
     ('RUIZ PEREZ', 'EDUARDO ALONSO', '82134675', 'Jr. Alameda 654', 'ruiz.eduardo@colegio.com', '958214637');
 
 
--- Insertar Matriculas (asegurando la referencia de sec_id existente)
+-- Insertar Matrículas (asegurando la referencia de sec_id, alu_id y emp_id existentes)
 INSERT INTO MATRICULA (alu_id, sec_id, emp_id, mat_fecha, mat_precio, mat_estado)
 VALUES 
-    (1, 1, 1, '2023-03-01', 100, 'Activo'),
-    (2, 2, 1, '2023-03-01', 100, 'Activo'),
-    (3, 3, 1, '2023-03-01', 100, 'Activo');
+    (1, 1, 1, '2023-03-01', 400, 'Activo'),
+    (2, 2, 1, '2023-03-01', 400, 'Activo'),
+    (3, 3, 1, '2023-03-01', 400, 'Activo');
 
 -- Insertar Pagos asegurando que pag_importe no sea NULL
 DECLARE @mat_id INT = 1;
@@ -241,10 +247,12 @@ DECLARE @mensualidad DECIMAL(10,2);
 
 WHILE @mat_id <= 3
 BEGIN
-    -- Verificar que @mensualidad no sea NULL
-    SELECT @mensualidad = grad_mensualidad 
-    FROM GRADO 
-    WHERE grad_id = (SELECT grad_id FROM SECCION WHERE sec_id = (SELECT sec_id FROM MATRICULA WHERE mat_id = @mat_id));
+    -- Obtener la mensualidad de acuerdo al nivel de la sección del alumno
+    SELECT @mensualidad = p.mensualidad 
+    FROM PRECIO p
+    JOIN GRADO g ON g.grad_nivel = p.nivel
+    JOIN SECCION s ON s.grad_id = g.grad_id
+    WHERE s.sec_id = (SELECT sec_id FROM MATRICULA WHERE mat_id = @mat_id);
 
     -- Si @mensualidad es NULL, asignarle un valor predeterminado (por ejemplo, 0)
     IF @mensualidad IS NULL
@@ -252,16 +260,16 @@ BEGIN
         SET @mensualidad = 0;
     END
 
-    -- Primer mes (ultimo dia de marzo)
+    -- Primer mes (último día de marzo)
     SET @pag_fecha = EOMONTH('2023-03-01');
     SET @pag_cuota = 1;
-    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_cuota, pag_importe)
+    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe)
     VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad);
 
-    -- Segundo mes (ultimo dia de abril)
+    -- Segundo mes (último día de abril)
     SET @pag_fecha = EOMONTH('2023-04-01');
     SET @pag_cuota = 2;
-    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_cuota, pag_importe)
+    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe)
     VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad);
 
     SET @mat_id = @mat_id + 1;
