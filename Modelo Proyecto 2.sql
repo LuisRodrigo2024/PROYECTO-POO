@@ -22,9 +22,8 @@ CREATE TABLE GRADO (
     grad_nivel VARCHAR(10) CHECK (grad_nivel IN ('PRIMARIA', 'SECUNDARIA'))
 );
 
--- Tabla PRECIO
 CREATE TABLE PRECIO (
-    nivel VARCHAR(10) UNIQUE CHECK (nivel IN ('PRIMARIA', 'SECUNDARIA')),
+    nivel VARCHAR(10) PRIMARY KEY CHECK (nivel IN ('PRIMARIA', 'SECUNDARIA')),
     mensualidad DECIMAL(10,2) NOT NULL
 );
 

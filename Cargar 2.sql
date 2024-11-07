@@ -233,11 +233,11 @@ VALUES
 
 
 -- Insertar Matrículas (asegurando la referencia de sec_id, alu_id y emp_id existentes)
-INSERT INTO MATRICULA (alu_id, sec_id, emp_id, mat_fecha, mat_precio, mat_estado)
+INSERT INTO MATRICULA (alu_id, sec_id, emp_id, mat_tipo, mat_fecha, mat_precio, mat_estado)
 VALUES 
-    (1, 1, 1, '2023-03-01', 400, 'Activo'),
-    (2, 2, 1, '2023-03-01', 400, 'Activo'),
-    (3, 3, 1, '2023-03-01', 400, 'Activo');
+    (1, 1, 1, 'REGULAR', '2023-03-01', 400, 'Activo'),
+    (2, 2, 1, 'REGULAR', '2023-03-01', 400, 'Activo'),
+    (3, 3, 1, 'REGULAR', '2023-03-01', 400, 'Activo');
 
 -- Insertar Pagos asegurando que pag_importe no sea NULL
 DECLARE @mat_id INT = 1;
