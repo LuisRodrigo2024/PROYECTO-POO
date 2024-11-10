@@ -138,7 +138,7 @@ VALUES
     ('FERNANDEZ CASTRO', 'LUCIA CAROLINA', 'Av. Los Pinos 321', 'lucia@colegio.com', 'lfernandez', '64739281'),
     ('SANCHEZ RAMIREZ', 'JORGE', 'Jr. Los Rosales 555', 'jorge@colegio.com', 'jsanchez', '53928471');
 
--- Insertar Profesores con nombres y apellidos en mayúsculas y DNIs de 8 dígitos
+-- Insertar Profesores con nombres y apellidos en mayÃºsculas y DNIs de 8 dÃ­gitos
 INSERT INTO PROFESOR (prof_apellido, prof_nombre, prof_dni, prof_direccion, prof_email, prof_telefono)
 VALUES 
     ('RAMIREZ GUTIERREZ', 'ALBERTO', '72456391', 'Calle Los Sauces 123', 'ramirez.alberto@colegio.com', '987643201'),
@@ -163,7 +163,7 @@ VALUES
     ('RUIZ PEREZ', 'EDUARDO ALONSO', '82134675', 'Jr. Alameda 654', 'ruiz.eduardo@colegio.com', '958214637');
 
 
--- Insertar Matrículas (asegurando la referencia de sec_id, alu_id y emp_id existentes)
+-- Insertar MatrÃ­culas (asegurando la referencia de sec_id, alu_id y emp_id existentes)
 INSERT INTO MATRICULA (alu_id, sec_id, emp_id, mat_tipo, mat_fecha, mat_precio, mat_estado)
 VALUES 
     (1, 1, 1, 'REGULAR', '2023-03-01', 400, 'Activo'),
@@ -190,19 +190,19 @@ BEGIN
     SELECT TOP 1 @mensualidad = COALESCE(mensualidad, 0) 
     FROM PRECIO;
 
-    -- Pago de la matrícula (último día de febrero)
+    -- Pago de la matrÃ­cula (Ãºltimo dÃ­a de febrero)
     SET @pag_fecha = EOMONTH('2023-02-01');
     SET @pag_cuota = 1;
     INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe, tipo_pago_id)
-    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad, 1); -- tipo_pago_id = 1 para matrícula
+    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad, 1); -- tipo_pago_id = 1 para matrÃ­cula
 
-    -- Primer mes (último día de marzo)
+    -- Primer mes (Ãºltimo dÃ­a de marzo)
     SET @pag_fecha = EOMONTH('2023-03-01');
     SET @pag_cuota = 2;
     INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe, tipo_pago_id)
     VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad, 2); -- tipo_pago_id = 2 para pagos mensuales
 
-    -- Segundo mes (último día de abril)
+    -- Segundo mes (Ãºltimo dÃ­a de abril)
     SET @pag_fecha = EOMONTH('2023-04-01');
     SET @pag_cuota = 3;
     INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe, tipo_pago_id)
@@ -212,17 +212,17 @@ BEGIN
     SET @mat_id = @mat_id + 1;
 END;
 
--- Declaraciones para el bucle de inserción de cronogramas de pago
+-- Declaraciones para el bucle de inserciÃ³n de cronogramas de pago
 DECLARE @anio_id INT = 2023;
 DECLARE @anio_inicio INT;
 
--- Bucle que recorrerá los anio_id hasta que ya no existan en la tabla ANIO
+-- Bucle que recorrerÃ¡ los anio_id hasta que ya no existan en la tabla ANIO
 WHILE EXISTS (SELECT 1 FROM ANIO WHERE anio_id = @anio_id)
 BEGIN
-    -- Obtener el año correspondiente al anio_id actual
+    -- Obtener el aÃ±o correspondiente al anio_id actual
     SELECT @anio_inicio = YEAR(anio_inicio) FROM ANIO WHERE anio_id = @anio_id;
 
-    -- Insertar el cronograma de pago para el año correspondiente al anio_id actual
+    -- Insertar el cronograma de pago para el aÃ±o correspondiente al anio_id actual
     INSERT INTO CRONOGRAMA_PAGO (anio_id, cro_fecha_prog)
     VALUES 
         (@anio_id, CAST(CONCAT(@anio_inicio, '-03-31') AS DATE)),  -- Marzo (31)
@@ -282,7 +282,7 @@ INSERT INTO HORARIO(asig_id, hor_dia, hor_inicio, hor_fin) VALUES
 (23,'MIERCOLES','08:00','08:45'),(23,'MIERCOLES','08:45','09:30'),(23,'MIERCOLES','09:30','10:15'),(23,'MIERCOLES','10:30','11:15'),
 (24,'LUNES','10:30','11:15'),(24,'LUNES','11:15','12:00'),(24,'LUNES','12:15','13:00'),(24,'LUNES','13:00','13:45'),
 (25,'LUNES','13:45','14:30'),(25,'MARTES','10:30','11:15'),(25,'MARTES','11:15','12:00'),(25,'MIERCOLES','11:15','12:00'),
-(26,'LUNES','13:00','13:45'),(26,'LUNES','13:45','14:30'),(26,'LUNES','08:00','08:45'),(26,'LUNES','08:45','09:30'),(26,'LUNES','09:30','10:15'),(26,'LUNES','10:30','11:15'),
+(26,'MARTES','12:15','13:00'),(26,'MARTES','13:00','13:45'),(26,'MARTES','13:45','14:30'),(26,'JUEVES','08:45','09:30'),(26,'JUEVES','09:30','10:15'),(26,'JUEVES','10:30','11:15'),
 (27,'MIERCOLES','12:15','13:00'),(27,'MIERCOLES','13:00','13:45'),(27,'MIERCOLES','13:45','14:30'),(27,'JUEVES','08:00','08:45'),
 (28,'LUNES','11:15','12:00'),(28,'LUNES','12:15','13:00'),(28,'LUNES','13:00','13:45'),(28,'LUNES','13:45','14:30'),
 (29,'LUNES','08:00','08:45'),(29,'LUNES','08:45','09:30'),(29,'LUNES','09:30','10:15'),(29,'LUNES','10:30','11:15'),
