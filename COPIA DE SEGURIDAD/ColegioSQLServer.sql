@@ -1,4 +1,4 @@
-USE MASTER;
+USE MASTER;  
 GO
 
 IF NOT EXISTS (SELECT NAME FROM sys.databases WHERE NAME = 'BDCOLEGIO')
@@ -28,9 +28,9 @@ CREATE TABLE PRECIO (
 -- Tabla SECCION
 CREATE TABLE SECCION (
     sec_id INT PRIMARY KEY IDENTITY(1,1),
+    anio_id INT NOT NULL,
     grad_id INT NOT NULL,
     sec_nombre VARCHAR(10) NOT NULL,
-	anio_id INT NOT NULL,
     sec_vacantes INT NOT NULL,
     sec_matriculados INT NOT NULL,
     FOREIGN KEY (anio_id) REFERENCES ANIO(anio_id),
@@ -68,11 +68,13 @@ CREATE TABLE EMPLEADO (
 -- Tabla MATRICULA
 CREATE TABLE MATRICULA (
     mat_id INT PRIMARY KEY IDENTITY(1,1),
-	alu_id INT NOT NULL,
     sec_id INT NOT NULL,
+    alu_id INT NOT NULL,
     emp_id INT NOT NULL,
-    mat_tipo VARCHAR(20) NOT NULL CHECK (mat_tipo IN ('REGULAR', 'BECA', 'MEDIABECA')),
+    mat_tipo VARCHAR(10) NULL,
+    CONSTRAINT chk_matricula_tipo CHECK (mat_tipo IN ('REGULAR', 'BECA', 'MEDIABECA')),
     mat_fecha DATETIME NOT NULL,
+    mat_precio DECIMAL(10,2) NOT NULL,
     mat_estado VARCHAR(10) NULL CHECK (mat_estado IN ('Activo', 'Retirado')),
     FOREIGN KEY (alu_id) REFERENCES ALUMNO(alu_id),
     FOREIGN KEY (sec_id) REFERENCES SECCION(sec_id),
@@ -82,31 +84,29 @@ CREATE TABLE MATRICULA (
 -- Tabla TIPO_PAGO
 CREATE TABLE TIPO_PAGO (
     tipo_pago_id INT PRIMARY KEY IDENTITY(1,1),
-    tipo_pago_nombre VARCHAR(20) NOT NULL
-);
-
--- Tabla CRONOGRAMA_PAGO
-CREATE TABLE CRONOGRAMA_PAGO (
-    cro_id INT PRIMARY KEY IDENTITY(1,1),
-    mat_id INT NOT NULL, -- Cambio realizado: Se agregó mat_id como clave foránea y NOT NULL para asociar con MATRICULA
-    tipo_pago_id INT NOT NULL, -- Cambio realizado: Se agregó tipo_pago_id como clave foránea y NOT NULL para asociar con TIPO_PAGO
-	cro_monto DECIMAL(10,2) NOT NULL,
-    cro_fecha_prog DATETIME NOT NULL,
-    FOREIGN KEY (mat_id) REFERENCES MATRICULA(mat_id),
-    FOREIGN KEY (tipo_pago_id) REFERENCES TIPO_PAGO(tipo_pago_id)
+    nombre VARCHAR(50) NOT NULL
 );
 
 -- Tabla PAGO
 CREATE TABLE PAGO (
     pag_id INT PRIMARY KEY IDENTITY(1,1),
-    cro_id INT NOT NULL, -- Cambio realizado: Se agregó cro_id como clave foránea NOT NULL para asociar con CRONOGRAMA_PAGO
+    mat_id INT NOT NULL,
+    tipo_pago_id INT NOT NULL,
     emp_id INT NOT NULL,
     pag_pension INT NOT NULL,
     pag_importe DECIMAL(10,2) NOT NULL,
     pag_fecha DATETIME NOT NULL,
-    pag_fecha_prog DATETIME NOT NULL,
-    FOREIGN KEY (cro_id) REFERENCES CRONOGRAMA_PAGO(cro_id),
+    FOREIGN KEY (mat_id) REFERENCES MATRICULA(mat_id),
+    FOREIGN KEY (tipo_pago_id) REFERENCES TIPO_PAGO(tipo_pago_id),
     FOREIGN KEY (emp_id) REFERENCES EMPLEADO(emp_id)
+);
+
+-- Tabla CRONOGRAMA_PAGO
+CREATE TABLE CRONOGRAMA_PAGO (
+    cro_id INT PRIMARY KEY IDENTITY(1,1),
+    anio_id INT NOT NULL,
+    cro_fecha_prog DATE NOT NULL,
+    CONSTRAINT fk_anio_id FOREIGN KEY (anio_id) REFERENCES ANIO(anio_id)
 );
 
 -- Tabla PROFESOR

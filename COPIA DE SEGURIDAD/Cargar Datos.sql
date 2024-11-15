@@ -156,73 +156,82 @@ VALUES
     ('RUIZ PEREZ', 'EDUARDO ALONSO', '82134675', 'Jr. Alameda 654', 'ruiz.eduardo@colegio.com', '958214637');
 
 
--- Asegúrate de que estos registros existen antes de activar el trigger
-INSERT INTO TIPO_PAGO (tipo_pago_nombre)
+-- Insertar Matrículas (asegurando la referencia de sec_id, alu_id y emp_id existentes)
+INSERT INTO MATRICULA (alu_id, sec_id, emp_id, mat_tipo, mat_fecha, mat_precio, mat_estado)
+VALUES 
+    (1, 1, 1, 'REGULAR', '2023-03-01', 400, 'Activo'),
+    (2, 2, 1, 'REGULAR', '2023-03-01', 400, 'Activo'),
+    (3, 3, 1, 'REGULAR', '2023-03-01', 400, 'Activo');
+
+-- Insertar tipos de pago en la tabla TIPO_PAGO
+INSERT INTO TIPO_PAGO (nombre)
 VALUES 
     ('Matricula'),
     ('Pension');
 
--- Insertar Matrículas (asegurando la referencia de sec_id, alu_id y emp_id existentes)
-INSERT INTO MATRICULA (alu_id, sec_id, emp_id, mat_tipo, mat_fecha, mat_estado)
-VALUES 
-    (1, 1, 1, 'REGULAR', '2023-03-01','Activo'),
-    (2, 2, 1, 'REGULAR', '2023-03-01','Activo'),
-    (3, 3, 1, 'REGULAR', '2023-03-01','Activo');
-GO
 
--- Paso 2: Generar Cronograma de Pagos para cada matrícula recién insertada
-DECLARE @mat_id INT;
-DECLARE @anio INT = 2023;  -- Usar el año actual para los cronogramas
+-- Insertar Pagos asegurando que pag_importe no sea NULL
+DECLARE @mat_id INT = 1;
+DECLARE @pag_fecha DATE;
+DECLARE @pag_cuota INT;
+DECLARE @mensualidad DECIMAL(10,2);
 
-DECLARE mat_cursor CURSOR FOR
-SELECT mat_id FROM MATRICULA;
-
-OPEN mat_cursor;
-
-FETCH NEXT FROM mat_cursor INTO @mat_id;
-
-WHILE @@FETCH_STATUS = 0
+WHILE @mat_id <= 3
 BEGIN
-    -- Insertar el cronograma de pago de matrícula (tipo_pago_id = 1) a finales de febrero
-    INSERT INTO CRONOGRAMA_PAGO (mat_id, tipo_pago_id, cro_monto, cro_fecha_prog)
-    VALUES (@mat_id, 1,400, EOMONTH(DATEFROMPARTS(@anio, 2, 1)));
+    -- Obtener la mensualidad desde la tabla PRECIO
+    -- Si no se encuentra un valor, asignar 0 como valor predeterminado.
+    SELECT TOP 1 @mensualidad = COALESCE(mensualidad, 0) 
+    FROM PRECIO;
 
-    -- Insertar cronogramas de pagos mensuales (tipo_pago_id = 2) desde marzo hasta noviembre
-    DECLARE @mes INT = 3;
+    -- Pago de la matrícula (último día de febrero)
+    SET @pag_fecha = EOMONTH('2023-02-01');
+    SET @pag_cuota = 1;
+    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe, tipo_pago_id)
+    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad, 1); -- tipo_pago_id = 1 para matrícula
 
-    WHILE @mes <= 11
-    BEGIN
-        -- Insertar cronogramas de marzo a noviembre (fin de cada mes)
-        INSERT INTO CRONOGRAMA_PAGO (mat_id, tipo_pago_id, cro_monto, cro_fecha_prog)
-        VALUES (@mat_id, 2, 400,  EOMONTH(DATEFROMPARTS(@anio, @mes, 1)));
-        
-        SET @mes = @mes + 1;
-    END;
+    -- Primer mes (último día de marzo)
+    SET @pag_fecha = EOMONTH('2023-03-01');
+    SET @pag_cuota = 2;
+    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe, tipo_pago_id)
+    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad, 2); -- tipo_pago_id = 2 para pagos mensuales
 
-    -- Insertar el cronograma de diciembre con fecha programada al 15 de diciembre
-    INSERT INTO CRONOGRAMA_PAGO (mat_id, tipo_pago_id, cro_monto, cro_fecha_prog)
-    VALUES (@mat_id, 2, 400, DATEFROMPARTS(@anio, 12, 15));
+    -- Segundo mes (último día de abril)
+    SET @pag_fecha = EOMONTH('2023-04-01');
+    SET @pag_cuota = 3;
+    INSERT INTO PAGO (mat_id, emp_id, pag_fecha, pag_pension, pag_importe, tipo_pago_id)
+    VALUES (@mat_id, 1, @pag_fecha, @pag_cuota, @mensualidad, 2); -- tipo_pago_id = 2 para pagos mensuales
 
-    -- Pasar a la siguiente matrícula en el cursor
-    FETCH NEXT FROM mat_cursor INTO @mat_id;
+    -- Incremento de mat_id para el siguiente ciclo
+    SET @mat_id = @mat_id + 1;
 END;
 
-CLOSE mat_cursor;
-DEALLOCATE mat_cursor;
-GO
+-- Declaraciones para el bucle de inserción de cronogramas de pago
+DECLARE @anio_id INT = 2023;
+DECLARE @anio_inicio INT;
 
+-- Bucle que recorrerá los anio_id hasta que ya no existan en la tabla ANIO
+WHILE EXISTS (SELECT 1 FROM ANIO WHERE anio_id = @anio_id)
+BEGIN
+    -- Obtener el año correspondiente al anio_id actual
+    SELECT @anio_inicio = YEAR(anio_inicio) FROM ANIO WHERE anio_id = @anio_id;
 
-INSERT INTO PAGO(cro_id, emp_id, pag_pension, pag_importe, pag_fecha, pag_fecha_prog) VALUES
-	(1,1,0,400,'2023-02-28','2023-02-28'),
-	(12,1,0,400,'2023-02-28','2023-02-28'),
-	(23,1,0,400,'2023-02-28','2023-02-28'),
-	(2,1,1,400,'2023-03-31','2023-03-31'),
-	(13,1,1,400,'2023-03-31','2023-03-31'),
-	(24,1,1,400,'2023-03-31','2023-03-31'),
-	(3,1,2,400,'2023-04-30','2023-04-30'),
-	(14,1,2,400,'2023-04-30','2023-04-30'),
-	(25,1,2,400,'2023-04-30','2023-04-30');
+    -- Insertar el cronograma de pago para el año correspondiente al anio_id actual
+    INSERT INTO CRONOGRAMA_PAGO (anio_id, cro_fecha_prog)
+    VALUES 
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-03-31') AS DATE)),  -- Marzo (31)
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-04-30') AS DATE)),  -- Abril (30)
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-05-31') AS DATE)),  -- Mayo (31)
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-06-30') AS DATE)),  -- Junio (30)
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-07-31') AS DATE)),  -- Julio (31)
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-08-31') AS DATE)),  -- Agosto (31)
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-09-30') AS DATE)),  -- Septiembre (30)
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-10-31') AS DATE)),  -- Octubre (31)
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-11-30') AS DATE)),  -- Noviembre (30)
+        (@anio_id, CAST(CONCAT(@anio_inicio, '-12-15') AS DATE));  -- Diciembre (15)
 
+    -- Incrementar el anio_id para el siguiente ciclo
+    SET @anio_id = @anio_id + 1;
+END;
 
 -- Inserciones simplificadas en SECCION_CURSO
 INSERT INTO SECCION_CURSO (sec_id, cur_id, prof_id) VALUES 
