@@ -139,7 +139,7 @@ SET sec_matriculados = sec_matriculados + 1
 WHERE sec_id IN (1, 2, 3);
 
 UPDATE SECCION
-SET sec_matriculados = sec_vacantes - 1
+SET sec_vacantes = sec_vacantes - 1
 WHERE sec_id IN (1, 2, 3);
 
 -- Paso 2: Generar Cronograma de Pagos para cada matrícula recién insertada
