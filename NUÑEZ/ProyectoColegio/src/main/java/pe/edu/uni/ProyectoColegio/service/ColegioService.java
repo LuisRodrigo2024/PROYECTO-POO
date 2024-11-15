@@ -1,0 +1,188 @@
+package pe.edu.uni.ProyectoColegio.service;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import pe.edu.uni.ProyectoColegio.dto.PagoDto;
+
+@Service
+public class ColegioService {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	public PagoDto pagoCuota(PagoDto dto){
+		// Validaciones
+		validarCronogramaid(dto.getCro_id(), dto.getPag_fecha());
+		validarFecha(dto.getCro_id(), dto.getPag_fecha());
+		validarPago(dto.getCro_id());
+		validarEmpleado(dto.getEmp_id());
+		dto.setPag_fecha_prog(recuperarFechaProg(dto.getCro_id()));
+		dto.setPag_fecha(convertirFecha(dto.getPag_fecha()));
+		validarImporte(dto.getPag_importe(), dto.getCro_id(), dto.getPag_fecha_prog(), dto.getPag_fecha());
+		
+		//Proceso
+		dto.setPag_pension(recuperarPension(dto.getCro_id()));
+		registrarPago(dto);
+		
+		// Reporte final
+		System.out.println("Proceso ok.");
+		return dto;
+	}
+
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+	private void registrarPago(PagoDto bean) {
+	    String sql = """
+	            INSERT INTO PAGO (cro_id, emp_id, pag_pension, pag_importe, pag_fecha, pag_fecha_prog) 
+	            VALUES (?, ?, ?, ?, ?, ?)
+	            """;
+	    jdbcTemplate.update(sql, bean.getCro_id(), bean.getEmp_id(), bean.getPag_pension(), bean.getPag_importe(), bean.getPag_fecha(), bean.getPag_fecha_prog());
+	}
+
+	private int recuperarPension(int idcronograma) {
+	    int numero_pension = (idcronograma - 1) % 11;
+	    return numero_pension;
+	}
+
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+	private void validarImporte(double importe, int idcronograma, String fecha_prog, String fecha) {
+		String sql = """
+				SELECT cro_monto FROM CRONOGRAMA_PAGO
+				WHERE cro_id = ?
+				""";
+		double costo = jdbcTemplate.queryForObject(sql, Double.class, idcronograma);
+		double mora = calcularMora(fecha_prog, fecha, importe);
+		costo = costo + mora;
+		if (costo != importe) {
+			throw new RuntimeException("El importe no es correcto");
+		}
+	}
+
+	public double calcularMora(String fecha_prog, String fecha, double importe) {
+	    // Definir los formatos esperados para cada fecha
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	    // Convertir las cadenas de fechas a LocalDate con el formato especificado para cada una
+	    LocalDate fechaProg = LocalDate.parse(fecha_prog, formatter);
+	    LocalDate fechaActual = LocalDate.parse(fecha, formatter);
+
+	    // Inicializar la variable para la mora
+	    double mora = 0;
+
+	    // Calcular la diferencia en días solo si fechaActual es después de fechaProg
+	    if (fechaActual.isAfter(fechaProg)) {
+	        long diasDiferencia = ChronoUnit.DAYS.between(fechaProg, fechaActual);
+	        double tasaMora = 0.05;
+	        mora = diasDiferencia * tasaMora * importe;
+	    }
+
+	    return mora;
+	}
+	
+	public String convertirFecha(String fecha) {
+	    // Definir los formatos: de entrada (dd/MM/yyyy) y de salida (yyyy-MM-dd)
+	    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	    // Parsear la fecha de entrada y formatearla al nuevo formato
+	    LocalDate date = LocalDate.parse(fecha, inputFormatter);
+	    return date.format(outputFormatter);
+	}
+
+	public String recuperarFechaProg(int idcronograma) {
+	    String sql = """
+	            SELECT cro_fecha_prog FROM CRONOGRAMA_PAGO
+	            WHERE cro_id = ?
+	            """;
+
+	    // Recuperar la fecha como Timestamp
+	    Timestamp timestamp = jdbcTemplate.queryForObject(sql, Timestamp.class, idcronograma);
+
+	    // Convertir el Timestamp a LocalDate
+	    LocalDate fecha = timestamp.toLocalDateTime().toLocalDate();
+
+	    // Formatear la fecha a String en el formato yyyy-MM-dd
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    return fecha.format(formatter);
+	}
+
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+	private void validarEmpleado(int idempleado) {
+		String sql = """
+				SELECT COUNT(*) FROM EMPLEADO
+				WHERE emp_id = ?
+				""";
+		int cont = jdbcTemplate.queryForObject(sql, Integer.class, idempleado);
+		if (cont != 1) {
+			throw new RuntimeException("El id del empleado no existe");
+		}
+	}
+
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+	private void validarPago(int idcronograma) {
+		//Validar si ya está pagado
+		String sql = """
+				SELECT COUNT(*) FROM PAGO WHERE cro_id = ?
+				""";
+		int cont = jdbcTemplate.queryForObject(sql, Integer.class, idcronograma);
+		if (cont != 0) {
+			throw new RuntimeException("El pago ya se ha realizado");
+		}
+	}
+	
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+	private void validarFecha(int idcronograma, String fecha) {
+	    // Validar que la fecha sea igual a la del año programado
+	    // Recuperando año programado
+	    String sql = """
+	            SELECT YEAR(cro_fecha_prog) FROM CRONOGRAMA_PAGO WHERE cro_id = ?
+	            """;
+	    int anio_prog = jdbcTemplate.queryForObject(sql, Integer.class, idcronograma);
+
+	    // Definir el formato de las fechas
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	    LocalDate fechaPaga;
+	    try {
+	        fechaPaga = LocalDate.parse(fecha, formatter);
+	    } catch (DateTimeParseException e) {
+	        throw new RuntimeException("La fecha proporcionada no es válida: " + fecha);
+	    }
+
+	    // Convertir LocalDate a java.sql.Date para usarlo en la consulta SQL
+	    java.sql.Date sqlFecha = java.sql.Date.valueOf(fechaPaga);
+
+	    // Consultar el año de la fecha proporcionada
+	    sql = """
+	            SELECT YEAR(?)
+	            """;
+	    int anio = jdbcTemplate.queryForObject(sql, Integer.class, sqlFecha);
+
+	    // Comparar el año proporcionado con el año programado
+	    if (anio_prog != anio) {
+	        throw new RuntimeException("La Fecha no corresponde al año programado.");
+	    }
+	}
+
+
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+	private void validarCronogramaid(int idcronograma, String fecha) {
+		//Validar que el id del cronograma exista
+		String sql = """
+				SELECT COUNT(*) FROM CRONOGRAMA_PAGO
+				WHERE cro_id = ?
+				""";
+		int cont = jdbcTemplate.queryForObject(sql, Integer.class, idcronograma);
+		if (cont != 1) {
+			throw new RuntimeException("El id del cronograma no existe");
+		}
+	}
+	
+}

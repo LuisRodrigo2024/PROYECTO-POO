@@ -71,42 +71,6 @@ BEGIN
     SET @grad_id = @grad_id + 1;
 END;
 
--- Crear Trigger para actualizar vacantes y matriculados en cada seccion
-GO
-CREATE TRIGGER trg_UpdateMatriculados
-ON MATRICULA
-AFTER INSERT, DELETE
-AS
-BEGIN
-    -- Actualizacion despues de una insercion
-    IF EXISTS(SELECT * FROM inserted)
-    BEGIN
-        UPDATE SECCION
-        SET sec_matriculados = sec_matriculados + 1,
-            sec_vacantes = sec_vacantes - 1
-        FROM SECCION S
-        INNER JOIN inserted I ON S.sec_id = I.sec_id;
-    END
-
-    -- Actualizacion despues de una eliminacion
-    IF EXISTS(SELECT * FROM deleted)
-    BEGIN
-        UPDATE SECCION
-        SET sec_matriculados = sec_matriculados - 1,
-            sec_vacantes = sec_vacantes + 1
-        FROM SECCION S
-        INNER JOIN deleted D ON S.sec_id = D.sec_id;
-    END
-
-    -- Validacion de que la suma de vacantes y matriculados sea 30 en cada seccion
-    IF EXISTS(SELECT 1 FROM SECCION WHERE sec_vacantes + sec_matriculados != 30)
-    BEGIN
-        ROLLBACK TRANSACTION;
-        RAISERROR ('Error: La suma de vacantes y matriculados debe ser 30 en cada seccion.', 16, 1);
-    END
-END;
-GO
-
 -- Insertar Alumnos
 INSERT INTO ALUMNO (alu_apellido, alu_nombre, alu_direccion, alu_telefono)
 VALUES 
@@ -169,6 +133,14 @@ VALUES
     (2, 2, 1, 'REGULAR', '2023-03-01','Activo'),
     (3, 3, 1, 'REGULAR', '2023-03-01','Activo');
 GO
+
+UPDATE SECCION
+SET sec_matriculados = sec_matriculados + 1
+WHERE sec_id IN (1, 2, 3);
+
+UPDATE SECCION
+SET sec_matriculados = sec_vacantes - 1
+WHERE sec_id IN (1, 2, 3);
 
 -- Paso 2: Generar Cronograma de Pagos para cada matrícula recién insertada
 DECLARE @mat_id INT;

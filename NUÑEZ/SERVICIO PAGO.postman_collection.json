@@ -1,0 +1,251 @@
+{
+	"info": {
+		"_postman_id": "21f6b43c-aa48-4361-9316-e9959a98d720",
+		"name": "SERVICIO PAGO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35040357",
+		"_collection_link": "https://proyecto-9585.postman.co/workspace/PROYECTO-Workspace~9d2d0b29-8f1f-46bc-b90d-5b5d9544702a/collection/35040357-21f6b43c-aa48-4361-9316-e9959a98d720?action=share&source=collection_link&creator=35040357"
+	},
+	"item": [
+		{
+			"name": "VALIDAR IDCRONOGRAMA",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 1000,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 400.00,\r\n    \"pag_fecha\": \"28/02/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VALIDAR DIA",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 1,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 400.00,\r\n    \"pag_fecha\": \"50/05/2024\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VALIDAR MES",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 1,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 400.00,\r\n    \"pag_fecha\": \"20/15/2024\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VALIDAR AÑO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 1,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 400.00,\r\n    \"pag_fecha\": \"20/12/2024\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VALIDAR SI ESTÁ PAGADO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 1,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 400.00,\r\n    \"pag_fecha\": \"20/12/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VALIDAR EMPLEADO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 4,\r\n    \"emp_id\": 10000,\r\n    \"pag_importe\": 400.00,\r\n    \"pag_fecha\": \"31/05/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VALIDAR IMPORTE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 4,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 500.00,\r\n    \"pag_fecha\": \"31/05/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PAGO EXITOSO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 4,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 400.00,\r\n    \"pag_fecha\": \"31/05/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
