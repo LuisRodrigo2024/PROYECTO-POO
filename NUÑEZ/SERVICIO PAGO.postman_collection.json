@@ -246,6 +246,36 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "PAGO EXITOSO MORA",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 15,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 500.00,\r\n    \"pag_fecha\": \"04/06/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
