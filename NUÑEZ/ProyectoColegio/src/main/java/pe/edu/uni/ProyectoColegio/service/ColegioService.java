@@ -24,6 +24,7 @@ public class ColegioService {
 		validarCronogramaid(dto.getCro_id(), dto.getPag_fecha());
 		validarFecha(dto.getCro_id(), dto.getPag_fecha());
 		validarPago(dto.getCro_id());
+		validarOrden(dto.getCro_id());
 		validarEmpleado(dto.getEmp_id());
 		dto.setPag_fecha_prog(recuperarFechaProg(dto.getCro_id()));
 		dto.setPag_fecha(convertirFecha(dto.getPag_fecha()));
@@ -65,7 +66,8 @@ public class ColegioService {
 			throw new RuntimeException("El importe no es correcto");
 		}
 	}
-
+	
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	public double calcularMora(String fecha_prog, String fecha, double importe) {
 	    // Definir los formatos esperados para cada fecha
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -79,7 +81,7 @@ public class ColegioService {
 
 	    // Calcular la diferencia en días solo si fechaActual es después de fechaProg
 	    if (fechaActual.isAfter(fechaProg)) {
-	        long diasDiferencia = ChronoUnit.DAYS.between(fechaProg, fechaActual);
+	        long diasDiferencia = ChronoUnit.DAYS.between(fechaProg, fechaActual) - 1;
 	        double tasaMora = 0.05;
 	        mora = diasDiferencia * tasaMora * importe;
 	    }
@@ -87,6 +89,7 @@ public class ColegioService {
 	    return mora;
 	}
 	
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	public String convertirFecha(String fecha) {
 	    // Definir los formatos: de entrada (dd/MM/yyyy) y de salida (yyyy-MM-dd)
 	    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -96,7 +99,8 @@ public class ColegioService {
 	    LocalDate date = LocalDate.parse(fecha, inputFormatter);
 	    return date.format(outputFormatter);
 	}
-
+	
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	public String recuperarFechaProg(int idcronograma) {
 	    String sql = """
 	            SELECT cro_fecha_prog FROM CRONOGRAMA_PAGO
@@ -124,6 +128,29 @@ public class ColegioService {
 		if (cont != 1) {
 			throw new RuntimeException("El id del empleado no existe");
 		}
+	}
+	
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+	private void validarOrden(int idcronograma) {
+		//Calculando el id de la matrícula
+		int idmatricula = (idcronograma - 1) / 11 + 1;
+		String sql = """
+		    SELECT COUNT(*) 
+		    FROM PAGO p 
+		    JOIN CRONOGRAMA_PAGO c ON p.cro_id = c.cro_id 
+		    WHERE c.mat_id = ?
+		""";
+		//Consulta que cuenta la cantidad de filas de la tabla Pago por id de matricula
+		int cont = jdbcTemplate.queryForObject(sql, Integer.class, idmatricula);
+
+		// Numero de cuota que va a pagar
+		int cuota = (idcronograma - 1) % 11;
+
+		// Verificar si el contador coincide con el numero de cuota que va a pagar
+		if (cuota != cont) {
+		    throw new RuntimeException("El pago se debe realizar en orden.");
+		}
+		
 	}
 
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
@@ -184,5 +211,5 @@ public class ColegioService {
 			throw new RuntimeException("El id del cronograma no existe");
 		}
 	}
-	
+		
 }

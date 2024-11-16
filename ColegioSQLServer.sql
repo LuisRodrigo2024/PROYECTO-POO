@@ -11,8 +11,8 @@ GO
 -- Tabla ANIO
 CREATE TABLE ANIO (
     anio_id INT PRIMARY KEY,
-    anio_inicio DATETIME NOT NULL,
-    anio_fin DATETIME NOT NULL
+    anio_inicio DATETIME NULL,
+    anio_fin DATETIME NULL
 );
 
 -- Tabla GRADO
