@@ -50,6 +50,7 @@ public class MatriculaService {
 	    int val=validarAlumnoNuevo(alu_id);
 	    if(val!=0) {
 	    	validarSeccionAlumno(alu_id, sec_id);
+	    	validarMatriculaAlumno(alu_id, sec_id);
 	    }
 	    
 	  
@@ -229,7 +230,7 @@ public class MatriculaService {
 	        throw new IllegalArgumentException("La fecha debe tener el formato dd/MM/yyyy");
 	    }
 
-	    // Validar día y mes
+	    // Validar día, mes y año
 	    String[] partesFecha = fechaLimpia.split("/");
 	    int dia = Integer.parseInt(partesFecha[0]);
 	    int mes = Integer.parseInt(partesFecha[1]);
@@ -239,12 +240,18 @@ public class MatriculaService {
 	        throw new IllegalArgumentException("La fecha ingresada no es válida. Verifique el día y el mes.");
 	    }
 
+	    // Validar que el mes sea enero o febrero
+	    if (mes != 1 && mes != 2) {
+	        throw new IllegalArgumentException("La fecha debe estar en los meses de enero o febrero.");
+	    }
+
 	    // Si pasa todas las validaciones, procedemos con la conversión
 	    String sql = "SELECT CONVERT(DATETIME, ?, 103) fecha";
 	    fecha_format = jdbcTemplate.queryForObject(sql, String.class, fechaLimpia);
 
 	    return fecha_format;
 	}
+
 	
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void validarSeccionAlumno(int alu_id, int sec_id) {
@@ -282,6 +289,8 @@ public class MatriculaService {
 	    return cont;
 	}
 	
+	
+	
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private double costo_Tipo(String mat_tipo) {
 
@@ -307,4 +316,29 @@ public class MatriculaService {
 
 	    return costo;
 	}
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+	private void validarMatriculaAlumno(int alu_id, int sec_id) {
+	    String sql = """
+	        SELECT COUNT(*) AS existe
+	        FROM MATRICULA M
+	        JOIN SECCION S ON M.sec_id = S.sec_id
+	        JOIN GRADO G ON S.grad_id = G.grad_id
+	        JOIN ANIO A ON S.anio_id = A.anio_id
+	        WHERE M.alu_id = ? 
+	          AND A.anio_id = (
+	              SELECT anio_id
+	              FROM SECCION
+	              WHERE sec_id = ?
+	          );
+	    """;
+	    
+	    int cont = jdbcTemplate.queryForObject(sql, Integer.class, alu_id, sec_id);
+	    
+	    if (cont > 0) {
+	        throw new RuntimeException("El alumno ya está matriculado en otro grado o sección en este año académico.");
+	    }
+	}
+	
+
+
 }

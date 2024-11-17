@@ -60,15 +60,16 @@ public class ColegioService {
 				WHERE cro_id = ?
 				""";
 		double costo = jdbcTemplate.queryForObject(sql, Double.class, idcronograma);
-		double mora = calcularMora(fecha_prog, fecha, importe);
+		double mora = calcularMora(fecha_prog, fecha, costo);
 		costo = costo + mora;
+		
 		if (costo != importe) {
 			throw new RuntimeException("El importe no es correcto");
 		}
 	}
 	
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
-	public double calcularMora(String fecha_prog, String fecha, double importe) {
+	public double calcularMora(String fecha_prog, String fecha, double costo) {
 	    // Definir los formatos esperados para cada fecha
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -81,11 +82,11 @@ public class ColegioService {
 
 	    // Calcular la diferencia en días solo si fechaActual es después de fechaProg
 	    if (fechaActual.isAfter(fechaProg)) {
-	        long diasDiferencia = ChronoUnit.DAYS.between(fechaProg, fechaActual) - 1;
+	        double diasDiferencia = ChronoUnit.DAYS.between(fechaProg, fechaActual);
 	        double tasaMora = 0.05;
-	        mora = diasDiferencia * tasaMora * importe;
+	        mora = diasDiferencia * tasaMora * costo;
 	    }
-
+	   
 	    return mora;
 	}
 	
