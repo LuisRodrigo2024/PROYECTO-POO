@@ -248,6 +248,36 @@
 			"response": []
 		},
 		{
+			"name": "VALIDAR IMPORTE MORA",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 4,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 400.00,\r\n    \"pag_fecha\": \"01/06/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "PAGO EXITOSO",
 			"request": {
 				"method": "POST",
@@ -284,7 +314,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"cro_id\": 15,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 500.00,\r\n    \"pag_fecha\": \"05/06/2023\"\r\n}",
+					"raw": "{\r\n    \"cro_id\": 5,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 500.00,\r\n    \"pag_fecha\": \"05/07/2023\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
