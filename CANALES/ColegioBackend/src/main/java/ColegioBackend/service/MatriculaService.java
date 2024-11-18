@@ -348,7 +348,7 @@ public class MatriculaService {
 	        throw new RuntimeException("El alumno ya está matriculado en otro grado o sección en este año académico.");
 	    }
 	}
-	// VALIDACION DE COINCIDENCIA DEL ANIO DE MATRICULA CON EL ANIO DE LA SECCION 
+
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void validarAnio( int sec_id, String mat_fecha) {
 	    String sql = """
@@ -361,7 +361,7 @@ public class MatriculaService {
 	    
 	    int cont = jdbcTemplate.queryForObject(sql, Integer.class, sec_id, mat_fecha);
 	    
-	    // Si no hay coincidencia, lanzar una excepción
+	    
 	    if (cont == 0) {
 	        throw new RuntimeException("El año de la fecha de matrícula no coincide con el año de la sección seleccionada.");
 	    }
