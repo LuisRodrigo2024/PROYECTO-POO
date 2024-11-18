@@ -6,7 +6,7 @@ INSERT INTO GRADO DEFAULT VALUES;
 GO 6
 
 -- Insertar Usuarios con contrasenas en formato 0001, 0002, 0003, etc.
-INSERT INTO USUARIO (nombre_usuario, contrasena, rol, correo_electronico)
+INSERT INTO USUARIO (user_nombre,user_contrasena,user_rol,user_email)
 VALUES 
     ('director', '0001', 'DIRECTOR', 'director@colegio.com'),
     ('subdirector', '0002', 'SUBDIRECTOR', 'subdirector@colegio.com'),

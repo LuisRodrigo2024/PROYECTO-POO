@@ -41,28 +41,28 @@ CREATE TABLE SECCION (
 CREATE TABLE CURSO (
     cur_id INT PRIMARY KEY IDENTITY(1,1),
     grad_id INT NOT NULL,
-    cur_nombre VARCHAR(100) NOT NULL,
+    cur_nombre VARCHAR(50) NOT NULL,
     FOREIGN KEY (grad_id) REFERENCES GRADO(grad_id)
 );
 
 -- Tabla ALUMNO
 CREATE TABLE ALUMNO (
     alu_id INT PRIMARY KEY IDENTITY(1,1),
-    alu_apellido VARCHAR(100) NOT NULL,
-    alu_nombre VARCHAR(100) NOT NULL,
-    alu_direccion VARCHAR(100) NOT NULL,
+    alu_apellido VARCHAR(50) NOT NULL,
+    alu_nombre VARCHAR(50) NOT NULL,
+    alu_direccion VARCHAR(50) NOT NULL,
     alu_telefono VARCHAR(20) NULL
 );
 
 -- Tabla EMPLEADO
 CREATE TABLE EMPLEADO (
     emp_id INT PRIMARY KEY IDENTITY(1,1),
-    emp_apellido VARCHAR(100) NOT NULL,
-    emp_nombre VARCHAR(100) NOT NULL,
-    emp_direccion VARCHAR(100) NOT NULL,
-    emp_email VARCHAR(100) NOT NULL,
+    emp_apellido VARCHAR(50) NOT NULL,
+    emp_nombre VARCHAR(50) NOT NULL,
+    emp_direccion VARCHAR(50) NOT NULL,
+    emp_email VARCHAR(50) NOT NULL,
     emp_usuario VARCHAR(20) NOT NULL,
-    emp_clave VARCHAR(100) NOT NULL
+    emp_clave VARCHAR(20) NOT NULL
 );
 
 -- Tabla MATRICULA
@@ -112,12 +112,12 @@ CREATE TABLE PAGO (
 -- Tabla PROFESOR
 CREATE TABLE PROFESOR (
     prof_id INT PRIMARY KEY IDENTITY(1,1),
-    prof_apellido VARCHAR(100) NOT NULL,
-    prof_nombre VARCHAR(100) NOT NULL,
-    prof_dni VARCHAR(15) NOT NULL,
-    prof_direccion VARCHAR(100) NULL,
-    prof_email VARCHAR(100) NULL,
-    prof_telefono VARCHAR(15) NULL
+    prof_apellido VARCHAR(50) NOT NULL,
+    prof_nombre VARCHAR(50) NOT NULL,
+    prof_dni VARCHAR(10) NOT NULL,
+    prof_direccion VARCHAR(50) NULL,
+    prof_email VARCHAR(50) NOT NULL,
+    prof_telefono VARCHAR(20) NOT NULL
 );
 
 -- Tabla SECCION_CURSO
@@ -157,11 +157,11 @@ CREATE TABLE HORARIO (
 
 -- Tabla USUARIO
 CREATE TABLE USUARIO (
-    id_usuario INT PRIMARY KEY IDENTITY(1,1),
-    nombre_usuario VARCHAR(50) UNIQUE NOT NULL,
-    contrasena VARCHAR(255) NOT NULL,
-    rol VARCHAR(20) NOT NULL CHECK (rol IN ('DIRECTOR', 'SUBDIRECTOR', 'PROFESOR', 'ADMINISTRATIVO', 'SUPERADMIN')),
-    correo_electronico VARCHAR(100) NULL,
+    user_id INT PRIMARY KEY IDENTITY(1,1),
+    user_nombre VARCHAR(50) UNIQUE NOT NULL,
+    user_contrasena VARCHAR(20) NOT NULL,
+    user_rol VARCHAR(20) NOT NULL CHECK (user_rol IN ('DIRECTOR', 'SUBDIRECTOR', 'PROFESOR', 'ADMINISTRATIVO', 'SUPERADMIN')),
+    user_email VARCHAR(50) NOT NULL,
     ultimo_acceso DATETIME NULL,
-    estado_activo BIT DEFAULT 1
+    user_estado INT NOT NULL DEFAULT 1
 );
