@@ -28,30 +28,40 @@ public class MatriculaService {
 	    int  emp_id=bean.getEmp_id();
 	    String mat_tipo=bean.getMat_tipo();
 	    String mat_fecha=bean.getMat_fecha();
-	    String mat_estado="Activo";
+	    String mat_estado="1";
 	    //auxiliar 
 	    double costo;
 	   
 		// Validaciones
+	    
 	  //validar seccion
 	    validarSeccion(sec_id);
+	    
 	    //validando alumno
 	    validarAlumno(alu_id, sec_id);
 	    
 	    //validar empleado
 	    validarEmpleado(emp_id);
+	    
 	    //validar tipo sea beca , regular
 	    mat_tipo=validarTipo(mat_tipo);
 	    bean.setMat_tipo(mat_tipo);
+	    
+	    
 	    //valdiar fecha ingresada en formato dd/mm/aa
 	    bean.setMat_fecha( validarFecha(mat_fecha));
 	    mat_fecha=validarFecha(mat_fecha);
-	    //validar seccion 
+	    
+	    // VALIDAR ANIO DE MATRICULA 
+	    validarAnio(sec_id, mat_fecha);;
+	   
+	    
+	   //validar seccion 
 	    int val=validarAlumnoNuevo(alu_id);
 	    if(val!=0) {
-	    	validarSeccionAlumno(alu_id, sec_id);
+	    	validarSeccionAlumno(alu_id, sec_id); 
 	    	validarMatriculaAlumno(alu_id, sec_id);
-	    }
+	    }   
 	    
 	  
 	    //Actualizando estado
@@ -338,7 +348,26 @@ public class MatriculaService {
 	        throw new RuntimeException("El alumno ya está matriculado en otro grado o sección en este año académico.");
 	    }
 	}
-	
+	// VALIDACION DE COINCIDENCIA DEL ANIO DE MATRICULA CON EL ANIO DE LA SECCION 
+	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+	private void validarAnio( int sec_id, String mat_fecha) {
+	    String sql = """
+	        SELECT COUNT(*) AS existe
+	        FROM SECCION S
+	        JOIN ANIO A ON S.anio_id = A.anio_id
+	        WHERE S.sec_id = ?
+	          AND YEAR(?) BETWEEN YEAR(A.anio_inicio) AND YEAR(A.anio_fin);
+	    """;
+	    
+	    int cont = jdbcTemplate.queryForObject(sql, Integer.class, sec_id, mat_fecha);
+	    
+	    // Si no hay coincidencia, lanzar una excepción
+	    if (cont == 0) {
+	        throw new RuntimeException("El año de la fecha de matrícula no coincide con el año de la sección seleccionada.");
+	    }
+	}
+
+
 
 
 }
