@@ -33,17 +33,5 @@ public class MatriculaRest {
 					.body("Error en el proceso: " + e.getMessage());
 		}		
 	}
-	@PostMapping("/matricula2")
-	public ResponseEntity<?> matricula2(@RequestBody MatriculaDto bean){
-		try {
-			bean = opcion.proc_Matricula(bean);
-			return ResponseEntity.status(HttpStatus.CREATED).body(bean);
-		} catch (Exception e) {
-			// Manejo de excepción y respuesta con error 500
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Error en el proceso: " + e.getMessage());
-		}		
-	}
-	
 
 }
