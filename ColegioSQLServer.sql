@@ -73,7 +73,7 @@ CREATE TABLE MATRICULA (
     emp_id INT NOT NULL,
     mat_tipo VARCHAR(20) NOT NULL CHECK (mat_tipo IN ('REGULAR', 'BECA', 'MEDIABECA')),
     mat_fecha DATETIME NOT NULL,
-    mat_estado VARCHAR(10) NULL CHECK (mat_estado IN ('Activo', 'Retirado')),
+    mat_estado INT NOT NULL CHECK (mat_estado IN (0,1)),
     FOREIGN KEY (alu_id) REFERENCES ALUMNO(alu_id),
     FOREIGN KEY (sec_id) REFERENCES SECCION(sec_id),
     FOREIGN KEY (emp_id) REFERENCES EMPLEADO(emp_id)

@@ -129,9 +129,9 @@ VALUES
 -- Insertar Matrículas (asegurando la referencia de sec_id, alu_id y emp_id existentes)
 INSERT INTO MATRICULA (alu_id, sec_id, emp_id, mat_tipo, mat_fecha, mat_estado)
 VALUES 
-    (1, 1, 1, 'REGULAR', '2023-03-01','Activo'),
-    (2, 2, 1, 'REGULAR', '2023-03-01','Activo'),
-    (3, 3, 1, 'REGULAR', '2023-03-01','Activo');
+    (1, 1, 1, 'REGULAR', '2023-03-01', 1),
+    (2, 2, 1, 'REGULAR', '2023-03-01', 1),
+    (3, 3, 1, 'REGULAR', '2023-03-01', 1);
 GO
 
 UPDATE SECCION
