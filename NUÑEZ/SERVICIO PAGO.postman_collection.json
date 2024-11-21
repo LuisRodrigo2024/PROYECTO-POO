@@ -44,7 +44,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"cro_id\": 1,\r\n    \"pag_fecha\": \"50/05/2024\"\r\n}",
+					"raw": "{\r\n    \"cro_id\": 1,\r\n    \"pag_fecha\": \"29/02/2023\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -105,6 +105,36 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"cro_id\": 1,\r\n    \"pag_fecha\": \"20/12/2000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VALIDAR MATRICULA ACTIVA",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 26,\r\n    \"pag_fecha\": \"20/05/2023\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -315,6 +345,36 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"cro_id\": 5,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 500.00,\r\n    \"pag_fecha\": \"05/07/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/pago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"pago"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PAGO EXITOSO NUEVO ALUMNO MORA",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cro_id\": 34,\r\n    \"emp_id\": 1,\r\n    \"pag_importe\": 210.00,\r\n    \"pag_fecha\": \"01/03/2023\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
