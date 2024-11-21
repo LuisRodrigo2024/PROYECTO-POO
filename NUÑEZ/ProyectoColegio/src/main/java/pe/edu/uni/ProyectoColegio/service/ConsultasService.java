@@ -109,7 +109,6 @@ public class ConsultasService {
 					WHERE prof_id = ?
 										""";
 			int aux = jdbcTemplate.queryForObject(sql, Integer.class, id_prof);
-			System.out.println(aux);
 			if (aux == 0) {
 				throw new Exception("Profesor no existe");
 			}
