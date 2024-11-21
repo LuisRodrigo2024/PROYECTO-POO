@@ -29,7 +29,29 @@ public class ConsultasService {
 		StringBuilder reporte = new StringBuilder();
 		List<FechapagoDto> lista = new LinkedList<>();
 		try {
+			
 			String sql = """
+					SELECT COUNT(*)
+					FROM ALUMNO
+					WHERE alu_id = ?
+										""";
+			int aux = jdbcTemplate.queryForObject(sql, Integer.class, alu_id);
+			if (aux == 0) {
+				throw new Exception("Alumno no existe");
+			}
+			
+			sql = """
+					SELECT
+					COUNT(*)
+					FROM MATRICULA
+					WHERE alu_id = ?
+										""";
+			aux = jdbcTemplate.queryForObject(sql, Integer.class, alu_id);
+			if (aux == 0) {
+				throw new Exception("Alumno no está matriculado");
+			}
+			
+			sql = """
 					SELECT
 					cro_monto mensualidad,
 					cro_fecha_prog fecha
@@ -58,6 +80,7 @@ public class ConsultasService {
 				reporte.append(String.format("%-15s %-27s %-27s%n", cuota, elemento.getMonto(), elemento.getFecha()));
 			}
 			reporte.append("------------------------------------------------------------------------\n");
+			
 
 		} catch (DataAccessException e) {
 			System.err.println("ERROR AL OBTENER LA INFORMACION: " + e.getMessage());
@@ -70,7 +93,29 @@ public class ConsultasService {
 		int contador = 0;
 		List<FechapagoDto> lista = new LinkedList<>();
 		try {
+			
 			String sql = """
+					SELECT COUNT(*)
+					FROM ALUMNO
+					WHERE alu_id = ?
+										""";
+			int aux = jdbcTemplate.queryForObject(sql, Integer.class, alu_id);
+			if (aux == 0) {
+				throw new Exception("Alumno no existe");
+			}
+			
+			sql = """
+					SELECT
+					COUNT(*)
+					FROM MATRICULA
+					WHERE alu_id = ?
+										""";
+			aux = jdbcTemplate.queryForObject(sql, Integer.class, alu_id);
+			if (aux == 0) {
+				throw new Exception("Alumno no está matriculado");
+			}
+			
+			sql = """
 					SELECT
 					cro_monto mensualidad,
 					cro_fecha_prog fecha
@@ -250,7 +295,7 @@ public class ConsultasService {
 			reporte.append(
 					"--------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 		} catch (Exception e) {
-			throw new Exception("Error en registro de venta: " + e.getMessage());
+			throw new Exception(e.getMessage());
 		}
 
 		return reporte.toString();
