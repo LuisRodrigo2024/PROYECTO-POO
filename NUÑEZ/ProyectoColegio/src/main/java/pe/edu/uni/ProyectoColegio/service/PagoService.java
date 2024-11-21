@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pe.edu.uni.ProyectoColegio.dto.PagoDto;
 
 @Service
-public class ColegioService {
+public class PagoService {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
