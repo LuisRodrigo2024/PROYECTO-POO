@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "f0eaf818-87df-42e9-a270-6e9c2701420e",
+		"name": "SERVICIO MATRICULA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35040357",
+		"_collection_link": "https://proyecto-9585.postman.co/workspace/PROYECTO-Workspace~9d2d0b29-8f1f-46bc-b90d-5b5d9544702a/collection/34988316-f0eaf818-87df-42e9-a270-6e9c2701420e?action=share&source=collection_link&creator=35040357"
+	},
+	"item": [
+		{
+			"name": "val_Seccion",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 5,\r\n    \"sec_id\": 1005,\r\n    \"emp_id\":2,\r\n    \"mat_tipo\":\"Regular\",\r\n    \"mat_fecha\":\"22/02/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "val_Alumno",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 5000,\r\n    \"sec_id\": 10,\r\n    \"emp_id\":2,\r\n    \"mat_tipo\":\"Regular\",\r\n    \"mat_fecha\":\"22/02/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "val_Empleado",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 5,\r\n    \"sec_id\": 10,\r\n    \"emp_id\":69,\r\n    \"mat_tipo\":\"Regular\",\r\n    \"mat_fecha\":\"22/02/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "val_Tipo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 5,\r\n    \"sec_id\": 6,\r\n    \"emp_id\":2,\r\n    \"mat_tipo\":\"Coronel\",\r\n    \"mat_fecha\":\"22/02/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "val_Fecha_dia",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 10,\r\n    \"sec_id\": 6,\r\n    \"emp_id\":2,\r\n    \"mat_tipo\":\"BECA\",\r\n    \"mat_fecha\":\"29/02/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "val_Fecha_mes",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 10,\r\n    \"sec_id\": 6,\r\n    \"emp_id\":2,\r\n    \"mat_tipo\":\"BECA\",\r\n    \"mat_fecha\":\"10/13/2025\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "val_Fecha_matricula",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 10,\r\n    \"sec_id\": 6,\r\n    \"emp_id\":2,\r\n    \"mat_tipo\":\"BECA\",\r\n    \"mat_fecha\":\"10/05/2025\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "val_Seccion y anio",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 5,\r\n    \"sec_id\": 6,\r\n    \"emp_id\":2,\r\n    \"mat_tipo\":\"BECA\",\r\n    \"mat_fecha\":\"08/02/2024\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "val_avance _Grado",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 2,\r\n    \"sec_id\": 24,\r\n    \"emp_id\":2,\r\n    \"mat_tipo\":\"BECA\",\r\n    \"mat_fecha\":\"08/02/2024\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Matricular",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alu_id\": 4,\r\n    \"sec_id\": 1,\r\n    \"emp_id\":2,\r\n    \"mat_tipo\":\"MEDIABECA\",\r\n    \"mat_fecha\":\"12/02/2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/colegio/matricula",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"colegio",
+						"matricula"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
