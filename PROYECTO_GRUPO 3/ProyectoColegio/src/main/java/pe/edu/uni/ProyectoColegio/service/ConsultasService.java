@@ -15,21 +15,21 @@ import pe.edu.uni.ProyectoColegio.dto.CursosProfesorResponse;
 import pe.edu.uni.ProyectoColegio.dto.FechapagoDto;
 import pe.edu.uni.ProyectoColegio.dto.HoraDto;
 import pe.edu.uni.ProyectoColegio.dto.HorarioDto;
+import pe.edu.uni.ProyectoColegio.dto.HorarioJSONDTO;
 import pe.edu.uni.ProyectoColegio.dto.ProfesorDto;
 
 @Service
 public class ConsultasService {
-	
-	
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
+
 	public String cronogramaPago(int alu_id) throws Exception {
 		int contador = 0;
 		StringBuilder reporte = new StringBuilder();
 		List<FechapagoDto> lista = new LinkedList<>();
 		try {
-			
+
 			String sql = """
 					SELECT COUNT(*)
 					FROM ALUMNO
@@ -39,7 +39,7 @@ public class ConsultasService {
 			if (aux == 0) {
 				throw new Exception("Alumno no existe");
 			}
-			
+
 			sql = """
 					SELECT
 					COUNT(*)
@@ -50,7 +50,7 @@ public class ConsultasService {
 			if (aux == 0) {
 				throw new Exception("Alumno no está matriculado");
 			}
-			
+
 			sql = """
 					SELECT
 					cro_monto mensualidad,
@@ -80,7 +80,6 @@ public class ConsultasService {
 				reporte.append(String.format("%-15s %-27s %-27s%n", cuota, elemento.getMonto(), elemento.getFecha()));
 			}
 			reporte.append("------------------------------------------------------------------------\n");
-			
 
 		} catch (DataAccessException e) {
 			System.err.println("ERROR AL OBTENER LA INFORMACION: " + e.getMessage());
@@ -93,7 +92,7 @@ public class ConsultasService {
 		int contador = 0;
 		List<FechapagoDto> lista = new LinkedList<>();
 		try {
-			
+
 			String sql = """
 					SELECT COUNT(*)
 					FROM ALUMNO
@@ -103,7 +102,7 @@ public class ConsultasService {
 			if (aux == 0) {
 				throw new Exception("Alumno no existe");
 			}
-			
+
 			sql = """
 					SELECT
 					COUNT(*)
@@ -114,7 +113,7 @@ public class ConsultasService {
 			if (aux == 0) {
 				throw new Exception("Alumno no está matriculado");
 			}
-			
+
 			sql = """
 					SELECT
 					cro_monto mensualidad,
@@ -122,7 +121,7 @@ public class ConsultasService {
 					FROM CRONOGRAMA_PAGO
 					WHERE mat_id=?
 					""";
-			
+
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, alu_id);
 			for (Map<String, Object> row : rows) {
 				FechapagoDto dto = new FechapagoDto();
@@ -142,8 +141,8 @@ public class ConsultasService {
 
 	@SuppressWarnings("deprecation")
 	public CursosProfesorResponse cursosProfesor(int id_prof) throws Exception {
-	    String sql;
-	    CursosProfesorResponse response = new CursosProfesorResponse();
+		String sql;
+		CursosProfesorResponse response = new CursosProfesorResponse();
 		ProfesorDto pdto = new ProfesorDto();
 		List<ClasesDto> lista = new LinkedList<>();
 		try {
@@ -167,12 +166,9 @@ public class ConsultasService {
 					WHERE prof_id=?
 									 """;
 
-			pdto = jdbcTemplate.queryForObject(
-				    sql,
-				    new Object[]{id_prof},
-				    new BeanPropertyRowMapper<>(ProfesorDto.class)
-				);
-			
+			pdto = jdbcTemplate.queryForObject(sql, new Object[] { id_prof },
+					new BeanPropertyRowMapper<>(ProfesorDto.class));
+
 			sql = """
 					SELECT
 					CONCAT(a.grad_id, a.sec_nombre) seccion,
@@ -241,14 +237,14 @@ public class ConsultasService {
 			}
 
 			sql = """
-					SELECT
-					    CONVERT(VARCHAR(8), hor_inicio, 108) AS inicio,
-					    CONVERT(VARCHAR(8), hor_fin, 108) AS fin
-					FROM HORARIO
-					GROUP BY
-					    CONVERT(VARCHAR(8), hor_inicio, 108),
-					    CONVERT(VARCHAR(8), hor_fin, 108);
-				""";
+						SELECT
+						    CONVERT(VARCHAR(8), hor_inicio, 108) AS inicio,
+						    CONVERT(VARCHAR(8), hor_fin, 108) AS fin
+						FROM HORARIO
+						GROUP BY
+						    CONVERT(VARCHAR(8), hor_inicio, 108),
+						    CONVERT(VARCHAR(8), hor_fin, 108);
+					""";
 
 			List<Map<String, Object>> filas = jdbcTemplate.queryForList(sql);
 			for (Map<String, Object> fila : filas) {
@@ -299,5 +295,155 @@ public class ConsultasService {
 		}
 
 		return reporte.toString();
+	}
+
+	public List<HorarioJSONDTO> horarioJSON(int sec_id) throws Exception {
+		List<HorarioJSONDTO> lista = new LinkedList<>();
+		String sql = "";
+		try {
+			sql = """
+					SELECT
+					COUNT(h.hor_id)
+					FROM HORARIO h
+					JOIN SECCION_CURSO s ON h.asig_id = s.asig_id
+					WHERE s.sec_id = ?;
+										""";
+			int aux = jdbcTemplate.queryForObject(sql, Integer.class, sec_id);
+			if (aux == 0) {
+				throw new Exception("Seccion no existe");
+			}
+			sql = """
+										DECLARE @SECCION INT = ?; --<-----------AQUI VA LA SECCION/
+					DECLARE @HORA VARCHAR(8) = '';
+					DECLARE @FIN VARCHAR(8) = '';
+					DECLARE @contador INT = 1;
+					DECLARE @curso1 VARCHAR(30) = '';
+					DECLARE @curso2 VARCHAR(30) = '';
+					DECLARE @curso3 VARCHAR(30) = '';
+					DECLARE @curso4 VARCHAR(30) = '';
+					DECLARE @curso5 VARCHAR(30) = '';
+
+					-- Tabla para almacenar resultados
+					DECLARE @result TABLE (
+					    inicio VARCHAR(8),
+						fin VARCHAR(8),
+					    lunes VARCHAR(30),
+						martes VARCHAR(30),
+						miercoles VARCHAR(30),
+						jueves VARCHAR(30),
+						viernes VARCHAR(30)
+					);
+
+					-- Loop to process each hour slot
+					WHILE @contador <= 8
+					BEGIN
+					-- Retrieve the current hora based on the iteration
+					WITH RankedHoras AS (
+					SELECT
+					    CONVERT(VARCHAR(8), hor_inicio, 108) AS hora,
+						CONVERT(VARCHAR(8), hor_fin, 108) AS fin,
+						c.cur_nombre nombre,
+					    ROW_NUMBER() OVER (ORDER BY hor_inicio) AS row_num
+					FROM HORARIO h JOIN SECCION_CURSO s ON h.asig_id=s.asig_id
+					JOIN CURSO c ON s.cur_id=c.cur_id
+					WHERE hor_dia = 'LUNES' AND sec_id=@SECCION
+					)
+					SELECT @HORA = hora,
+					@FIN = fin,
+					@curso1 = nombre
+					FROM RankedHoras
+					WHERE row_num = @contador;
+
+					WITH RankedHoras AS (
+					SELECT
+						c.cur_nombre nombre,
+					    ROW_NUMBER() OVER (ORDER BY hor_inicio) AS row_num
+					FROM HORARIO h JOIN SECCION_CURSO s ON h.asig_id=s.asig_id
+					JOIN CURSO c ON s.cur_id=c.cur_id
+					WHERE hor_dia = 'MARTES' AND sec_id=@SECCION
+					)
+					SELECT @curso2 = nombre
+					FROM RankedHoras
+					WHERE row_num = @contador;
+
+					WITH RankedHoras AS (
+					SELECT
+						c.cur_nombre nombre,
+					    ROW_NUMBER() OVER (ORDER BY hor_inicio) AS row_num
+					FROM HORARIO h JOIN SECCION_CURSO s ON h.asig_id=s.asig_id
+					JOIN CURSO c ON s.cur_id=c.cur_id
+					WHERE hor_dia = 'MIERCOLES' AND sec_id=@SECCION
+					)
+					SELECT
+					@curso3 = nombre
+					FROM RankedHoras
+					WHERE row_num = @contador;
+
+					WITH RankedHoras AS (
+					SELECT
+						c.cur_nombre nombre,
+					    ROW_NUMBER() OVER (ORDER BY hor_inicio) AS row_num
+					FROM HORARIO h JOIN SECCION_CURSO s ON h.asig_id=s.asig_id
+					JOIN CURSO c ON s.cur_id=c.cur_id
+					WHERE hor_dia = 'JUEVES' AND sec_id=@SECCION
+					)
+					SELECT
+					@curso4 = nombre
+					FROM RankedHoras
+					WHERE row_num = @contador;
+
+					WITH RankedHoras AS (
+					SELECT
+						c.cur_nombre nombre,
+					    ROW_NUMBER() OVER (ORDER BY hor_inicio) AS row_num
+					FROM HORARIO h JOIN SECCION_CURSO s ON h.asig_id=s.asig_id
+					JOIN CURSO c ON s.cur_id=c.cur_id
+					WHERE hor_dia = 'VIERNES' AND sec_id=@SECCION
+					)
+					SELECT
+					@curso5 = nombre
+					FROM RankedHoras
+					WHERE row_num = @contador;
+
+
+					    -- Insert los datos en la tabla
+					    INSERT INTO @result (inicio, fin, lunes, martes, miercoles, jueves, viernes)
+					    SELECT
+					        @HORA AS inicio,
+							@FIN AS fin,
+							@curso1 AS lunes,
+					        @curso2 AS martes,
+							@curso3 AS miercoles,
+							@curso4 AS jueves,
+							@curso5 AS viernes
+
+					    -- aumentar el contador
+					    SET @contador = @contador + 1;
+					END;
+
+					-- Mostrar el resultado
+					SELECT *
+					FROM @result
+					ORDER BY inicio;
+																				         """;
+
+			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, sec_id);
+			for (Map<String, Object> row : rows) {
+				HorarioJSONDTO dto = new HorarioJSONDTO();
+				dto.setInicio(row.get("inicio").toString());
+				dto.setFin(row.get("fin").toString());
+				dto.setLunes(row.get("lunes").toString());
+				dto.setMartes(row.get("martes").toString());
+				dto.setMiercoles(row.get("miercoles").toString());
+				dto.setJueves(row.get("jueves").toString());
+				dto.setViernes(row.get("viernes").toString());
+				lista.add(dto);
+			}
+
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
+
+		return lista;
 	}
 }

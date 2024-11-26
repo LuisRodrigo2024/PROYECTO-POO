@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pe.edu.uni.ProyectoColegio.dto.CursosProfesorResponse;
 import pe.edu.uni.ProyectoColegio.dto.FechapagoDto;
+import pe.edu.uni.ProyectoColegio.dto.HorarioJSONDTO;
 import pe.edu.uni.ProyectoColegio.dto.MatriculaDto;
 import pe.edu.uni.ProyectoColegio.dto.PagoDto;
 import pe.edu.uni.ProyectoColegio.service.ConsultasService;
@@ -125,6 +126,17 @@ public class ColegioController {
 		String reporte;
         try {
         	reporte = consultasService.horario(sec_id);
+        	return ResponseEntity.ok(reporte);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en el proceso: " + e.getMessage());
+		}
+    }
+	
+	@GetMapping("/horariojson")
+    public ResponseEntity<?> getHorariosjson(@RequestParam("sec_id")  int sec_id) {
+		List<HorarioJSONDTO> reporte;
+        try {
+        	reporte = consultasService.horarioJSON(sec_id);
         	return ResponseEntity.ok(reporte);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en el proceso: " + e.getMessage());
