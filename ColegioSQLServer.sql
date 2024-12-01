@@ -117,7 +117,9 @@ CREATE TABLE PROFESOR (
     prof_dni VARCHAR(10) NOT NULL,
     prof_direccion VARCHAR(50) NULL,
     prof_email VARCHAR(50) NOT NULL,
-    prof_telefono VARCHAR(20) NOT NULL
+	prof_telefono VARCHAR(20) NOT NULL,
+	prof_usuario VARCHAR(20) NOT NULL,
+	prof_clave VARCHAR(20) NOT NULL
 );
 
 -- Tabla SECCION_CURSO
@@ -159,7 +161,7 @@ CREATE TABLE HORARIO (
 CREATE TABLE USUARIO (
     user_id INT PRIMARY KEY IDENTITY(1,1),
     user_nombre VARCHAR(50) UNIQUE NOT NULL,
-    user_contrasena VARCHAR(20) NOT NULL,
+    user_clave VARCHAR(20) NOT NULL,
     user_rol VARCHAR(20) NOT NULL CHECK (user_rol IN ('DIRECTOR', 'SUBDIRECTOR', 'PROFESOR', 'ADMINISTRATIVO', 'SUPERADMIN')),
     user_email VARCHAR(50) NOT NULL,
     ultimo_acceso DATETIME NULL,
