@@ -3,142 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Pagos</title>
+    <title>Gestión de Pagos</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Link a Bootstrap para mejorar el diseño -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        input[type="text"], input[type="date"], input[type="number"] {
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            width: 100%;
-            margin: 5px 0;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 30px;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f1f1f1;
-        }
-
-        .pagar-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .pagar-btn:hover {
-            background-color: #218838;
-        }
-
-        .confirmar-btn {
-            background-color: #ffc107;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .confirmar-btn:hover {
-            background-color: #e0a800;
-        }
-
-        .alerta-error {
-            color: red;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-    </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Consulta de Pagos</h1>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Gestión de Pagos</h1>
 
         <!-- Formulario para ingresar código de alumno y fecha -->
-        <form id="form-consulta">
-            <div class="mb-3">
-                <label for="alu_id" class="form-label">Código de Alumno:</label>
-                <input type="text" id="alu_id" name="alu_id" class="form-control" required>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form id="form-consulta" class="row g-3">
+                    <div class="col-md-6">
+                        <label for="alu_id" class="form-label">Código de Alumno:</label>
+                        <input type="text" id="alu_id" name="alu_id" class="form-control" placeholder="Ej. 12345" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="fecha" class="form-label">Fecha:</label>
+                        <input type="date" id="fecha" name="fecha" class="form-control" required>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Consultar Cronograma
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="mb-3">
-                <label for="fecha" class="form-label">Fecha:</label>
-                <input type="date" id="fecha" name="fecha" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Consultar Cronograma</button>
-        </form>
+        </div>
 
-        <table id="tabla-pagos" class="table table-bordered mt-4">
-            <thead>
-                <tr>
-                    <th>Concepto</th>
-                    <th>Monto Base</th>
-                    <th>Mora</th>
-                    <th>Monto Total</th>
-                    <th>Estado</th>
-                    <th>Fecha Límite</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Las filas se llenarán dinámicamente -->
-            </tbody>
-        </table>
-
-        <div class="alerta-error" id="error-message" style="display: none;"></div>
+        <!-- Tabla de Pagos -->
+        <div class="table-responsive">
+            <table id="tabla-pagos" class="table table-striped table-bordered shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Monto Base</th>
+                        <th>Mora</th>
+                        <th>Monto Total</th>
+                        <th>Estado</th>
+                        <th>Fecha Límite</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas se llenarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -147,9 +66,7 @@
             event.preventDefault();
 
             var alu_id = $("#alu_id").val();
-            var fecha = $("#fecha").val();  // Formato recibido: yyyy-mm-dd
-
-            // Convertir la fecha al formato dd/MM/yyyy
+            var fecha = $("#fecha").val();
             var fechaFormateada = convertirFechaAFormato(fecha);
 
             // Llamada al servicio GET
@@ -157,13 +74,12 @@
                 url: `http://localhost:8080/api/colegio/pago/detallado?fecha=${fechaFormateada}&alu_id=${alu_id}`,
                 method: 'GET',
                 success: function(response) {
-                    // Limpiar la tabla
                     var tabla = $("#tabla-pagos tbody");
                     tabla.empty();
 
                     response.forEach(function(row) {
                         var rowHtml = `
-                            <tr id="row-${row.cro_id}">
+                            <tr id="row-${row.cro_id}" class="${row.estado === 'PAGADO' ? 'table-success' : ''}">
                                 <td>${row.concepto}</td>
                                 <td>${row.monto_base}</td>
                                 <td>${row.mora}</td>
@@ -172,64 +88,69 @@
                                 <td>${row.fecha_limite}</td>
                                 <td>
                                     ${row.estado === "PENDIENTE" ? 
-                                    `<button class="pagar-btn" data-cro_id="${row.cro_id}" data-monto_total="${row.monto_total}">Pagar</button>` : 
-                                    ''}
+                                    `<button class="btn btn-warning btn-sm pagar-btn" data-cro_id="${row.cro_id}" data-monto_total="${row.monto_total}">
+                                        <i class="fas fa-money-bill"></i> Pagar
+                                    </button>` : 
+                                    '<span class="badge bg-success">Pago Exitoso</span>'}
                                 </td>
                             </tr>
                         `;
                         tabla.append(rowHtml);
                     });
 
-                    // Manejar click en el botón "Pagar"
                     $(".pagar-btn").click(function() {
                         var cro_id = $(this).data("cro_id");
                         var monto_total = $(this).data("monto_total");
-
-                        // Reemplazar el botón con el campo para ingresar el monto y el botón de confirmar
                         var row = $(this).closest("tr");
-                        row.find("td:last-child").html(`
-                            <input type="number" id="monto-${cro_id}" value="${monto_total}" class="form-control" />
-                            <button class="confirmar-btn" data-cro_id="${cro_id}" data-monto_total="${monto_total}">Confirmar Pago</button>
-                        `);
 
-                        // Manejar el pago confirmado
-                        $(".confirmar-btn").click(function() {
-                            var monto_pagado = $(`#monto-${cro_id}`).val();
-                            var emp_id = localStorage.getItem("userEmpCodigo");  // Obtener emp_id de localStorage
-                            var fecha_pago = $("#fecha").val();  // Usar la fecha ingresada en el formulario
-                            var fechaPagoFormateada = convertirFechaAFormato(fecha_pago);  // Convertir fecha
+                        Swal.fire({
+                            title: 'Confirmar Pago',
+                            html: `
+                                <input type="number" id="monto-${cro_id}" class="form-control" value="${monto_total}" placeholder="Ingrese monto" />
+                            `,
+                            confirmButtonText: 'Pagar',
+                            cancelButtonText: 'Cancelar',
+                            showCancelButton: true,
+                            preConfirm: () => {
+                                return $(`#monto-${cro_id}`).val();
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                var monto_pagado = result.value;
+                                var emp_id = localStorage.getItem("userEmpCodigo");
+                                var fecha_pago = $("#fecha").val();
+                                var fechaPagoFormateada = convertirFechaAFormato(fecha_pago);
 
-                            // Llamada al servicio POST para registrar el pago
-                            $.ajax({
-                                url: 'http://localhost:8080/api/colegio/pago',
-                                method: 'POST',
-                                data: JSON.stringify({
-                                    cro_id: cro_id,
-                                    emp_id: emp_id,
-                                    pag_importe: monto_pagado,
-                                    pag_fecha: fechaPagoFormateada  // Registrar el pago con la fecha ingresada
-                                }),
-                                contentType: 'application/json',
-                                success: function(response) {
-                                    alert("Pago registrado exitosamente");
-                                    row.find("td:last-child").html("PAGADO");
-                                },
-                                error: function(xhr) {
-                                    // Mostrar mensaje de error
-                                    $("#error-message").text('Error al realizar el pago: ' + xhr.responseText).show();
-                                }
-                            });
+                                $.ajax({
+                                    url: 'http://localhost:8080/api/colegio/pago',
+                                    method: 'POST',
+                                    data: JSON.stringify({
+                                        cro_id: cro_id,
+                                        emp_id: emp_id,
+                                        pag_importe: monto_pagado,
+                                        pag_fecha: fechaPagoFormateada
+                                    }),
+                                    contentType: 'application/json',
+                                    success: function() {
+                                        Swal.fire('Éxito', 'Pago registrado exitosamente', 'success');
+                                        row.find("td:nth-child(5)").text("PAGADO");
+                                        row.find("td:last-child").html('<span class="badge bg-success">Pago Exitoso</span>');
+                                        row.addClass("table-success");
+                                    },
+                                    error: function(xhr) {
+                                        Swal.fire('Error', xhr.responseText, 'error');
+                                    }
+                                });
+                            }
                         });
                     });
                 },
                 error: function(xhr) {
-                    // Mostrar mensaje de error
-                    $("#error-message").text('Error al obtener el cronograma de pagos: ' + xhr.responseText).show();
+                    Swal.fire('Error', 'No se pudo obtener el cronograma de pagos: ' + xhr.responseText, 'error');
                 }
             });
         });
 
-        // Función para convertir la fecha de formato yyyy-mm-dd a dd/MM/yyyy
         function convertirFechaAFormato(fecha) {
             var partes = fecha.split("-");
             return partes[2] + "/" + partes[1] + "/" + partes[0];
@@ -237,4 +158,6 @@
     </script>
 </body>
 </html>
+
+
 

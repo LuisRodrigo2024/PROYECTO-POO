@@ -27,7 +27,7 @@ public class ConsultasService {
 
 	
 	public List<Map<String, Object>> ConPagosDetallado(String fecha, int alu_id) {
-	    // Definir la consulta SQL sin el uso de "USE" y sin "DECLARE"
+	    // Definir la consulta SQL
 	    String sql = """
 	    SELECT 
 	        CP.cro_id AS cro_id,
@@ -38,7 +38,7 @@ public class ConsultasService {
 	        END AS concepto,
 	        CP.cro_monto AS monto_base,
 	        CASE 
-	            WHEN P.pag_id IS NOT NULL THEN 0
+	            WHEN P.pag_id IS NOT NULL THEN P.pag_importe - CP.cro_monto -- Mora calculada para pagos realizados
 	            ELSE 
 	                CASE 
 	                    WHEN DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) > 0 THEN 
@@ -46,10 +46,10 @@ public class ConsultasService {
 	                    ELSE 0
 	                END
 	        END AS mora,
-	        CP.cro_monto + 
 	        CASE 
-	            WHEN P.pag_id IS NOT NULL THEN 0
+	            WHEN P.pag_id IS NOT NULL THEN P.pag_importe -- Total pagado si el estado es PAGADO
 	            ELSE 
+	                CP.cro_monto + 
 	                CASE 
 	                    WHEN DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) > 0 THEN 
 	                        DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) * 0.05 * CP.cro_monto
@@ -71,6 +71,7 @@ public class ConsultasService {
 	    // Ejecutar la consulta y devolver los resultados
 	    return jdbcTemplate.queryForList(sql, fecha, fecha, fecha, fecha, alu_id, fecha);
 	}
+
 
 
 
