@@ -90,6 +90,15 @@ public class ColegioController {
 		}		
 	}
     
+    @GetMapping("/seccion")
+    public List<Map<String, Object>> getSecciones(
+        @RequestParam String nombre,  // Parametro nombre (A o B)
+        @RequestParam int grado,     // Parametro grado
+        @RequestParam String fecha   // Parametro fecha
+    ) {
+        return consultasService.idSecAnio(nombre, grado, fecha) ;  // Llamada al servicio
+    }
+    
     @GetMapping("/horario/{codigo}")
 	public ResponseEntity<?> getHorario_seccion(@PathVariable int codigo){
 		try {

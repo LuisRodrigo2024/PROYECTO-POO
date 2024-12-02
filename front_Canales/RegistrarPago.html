@@ -13,6 +13,21 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .btn-harvard {
+            background-color: #A51C30; /* Crimson */
+            color: #FFC72C; /* Amarillo dorado */
+            font-weight: bold;
+            border: none;
+        }
+    
+        .btn-harvard:hover {
+            background-color: #FFC72C; /* Amarillo */
+            color: #A51C30; /* Crimson */
+            border: 1px solid #A51C30; /* Borde Crimson */
+        }
+    </style>
+    
 </head>
 <body class="bg-light">
     <div class="container py-5">
@@ -31,9 +46,10 @@
                         <input type="date" id="fecha" name="fecha" class="form-control" required>
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary w-100">
+                        <button type="submit" class="btn btn-harvard w-100">
                             <i class="fas fa-search"></i> Consultar Cronograma
                         </button>
+                        
                     </div>
                 </form>
             </div>

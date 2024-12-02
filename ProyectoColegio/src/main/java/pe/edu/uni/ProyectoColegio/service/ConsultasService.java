@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import pe.edu.uni.ProyectoColegio.dto.ClasesDto;
@@ -70,6 +69,24 @@ public class ConsultasService {
 
 	    // Ejecutar la consulta y devolver los resultados
 	    return jdbcTemplate.queryForList(sql, fecha, fecha, fecha, fecha, alu_id, fecha);
+	}
+
+
+	public List<Map<String, Object>> idSecAnio(String nombre, int grado, String fecha) {
+	    // Definir la consulta SQL
+	    String sql = """
+	    SELECT 
+    S.sec_id AS sec_id,
+    S.sec_nombre AS sec_nombre
+FROM SECCION S
+WHERE S.sec_nombre = ?
+  AND S.grad_id = ?
+  AND S.anio_id = YEAR(CONVERT(DATE, ?, 103));
+
+	    """;
+
+	    // Ejecutar la consulta y devolver los resultados
+	    return jdbcTemplate.queryForList(sql, nombre, grado, fecha);
 	}
 
 
