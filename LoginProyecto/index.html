@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Colegio Habitch</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow">
+    <meta property="og:title" content="Colegio Habitch">
+    <meta name="description" property="og:description" content="Sistema Intranet HABITCH.">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Favicon -->
+	<link rel="icon" href="images/Logo_Colegio_Habitch.png" type="image/x-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to right, #939393 50%, #A04020 50%);
+        }
+        .cls-content-sm {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transform: translateY(100px);
+            opacity: 0;
+            animation: slideUp 1s ease forwards;
+        }
+        .logo {
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        p {
+            font-size: 16px;
+            font-weight: 300;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        .form-control {
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .form-control:focus {
+            border-color: #FF4E0E;
+            box-shadow: 0 0 5px rgba(255, 78, 14, 0.5);
+        }
+        .btn-warning {
+            background-color: #FF4E0E;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 15px;
+        }
+        .btn-warning:hover {
+            background-color: #e9440d;
+            transform: scale(1.05);
+        }
+        .toggle-password-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto 20px;
+            padding: 8px 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .toggle-password-btn:hover {
+            background-color: #eaeaea;
+            transform: scale(1.05);
+        }
+        .toggle-password-btn i {
+            margin-right: 8px;
+        }
+        .forgot-password {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #FF4E0E;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .forgot-password:hover {
+            color: #e9440d;
+            text-decoration: underline;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-bottom: 10px;
+            text-align: left;
+            display: none;
+        }
+        @keyframes slideUp {
+            0% {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+		
+		canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Detrás del contenido */
+}
+.cls-content-sm {
+    position: relative;
+    z-index: 10; /* Frente al canvas */
+}
+
+    </style>
+</head>
+<body>
+
+	<canvas id="backgroundCanvas"></canvas>
+
+    <div class="cls-content-sm">
+        <img src="images/Logo_Colegio_Habitch.png" alt="Mochila Colegio" class="logo" width="150">
+        <h3>Colegio Habitch</h3>
+        <p>Ingresa a tu cuenta</p>
+        <form autocomplete="off" id="loginForm">
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                    <input type="text" class="form-control" name="usuario" id="usuario" placeholder="Nombre de usuario">
+                </div>
+                <div class="error-message" id="usuarioError">Por favor, ingresa tu nombre de usuario.</div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Contraseña">
+                </div>
+                <div class="error-message" id="passwordError">Por favor, ingresa tu contraseña.</div>
+                <button type="button" class="toggle-password-btn" id="togglePasswordBtn">
+                    <i class="fa fa-eye"></i> Mostrar Contraseña
+                </button>
+            </div>
+            <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+            <button class="btn-warning btn-block" id="loginButton" type="submit">Iniciar Sesión</button>
+        </form>
+    </div>
+
+    <script>
+        // Variables de elementos del DOM
+        const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+        const passwordInput = document.getElementById('password');
+        const loginForm = document.getElementById('loginForm');
+        const usuarioInput = document.getElementById('usuario');
+        const usuarioError = document.getElementById('usuarioError');
+        const passwordError = document.getElementById('passwordError');
+        const loginButton = document.getElementById('loginButton');
+
+        // Mostrar/Ocultar contraseña
+        togglePasswordBtn.addEventListener('click', () => {
+        const isPasswordVisible = passwordInput.getAttribute('type') === 'text';
+        passwordInput.setAttribute('type', isPasswordVisible ? 'password' : 'text');
+        togglePasswordBtn.innerHTML = isPasswordVisible
+            ? '<i class="fa fa-eye"></i> Mostrar Contraseña'
+            : '<i class="fa fa-eye-slash"></i> Ocultar Contraseña';
+    });
+
+        // Validación y envío del formulario
+        loginForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Prevenir el comportamiento por defecto
+
+        let valid = true;
+
+    // Validar usuario
+    if (usuarioInput.value.trim() === '') {
+        usuarioError.style.display = 'block';
+        valid = false;
+    } else {
+        usuarioError.style.display = 'none';
+    }
+
+    // Validar contraseña
+    if (passwordInput.value.trim() === '') {
+        passwordError.style.display = 'block';
+        valid = false;
+    } else {
+        passwordError.style.display = 'none';
+    }
+
+    // Si la validación es exitosa, enviar datos al servidor
+    if (valid) {
+        const usuario = usuarioInput.value.trim();
+        const clave = passwordInput.value.trim();
+
+        const settings = {
+            url: `http://localhost:8080/api/colegio/login?usuario=${usuario}&clave=${clave}`,
+            method: "POST",
+            timeout: 0,
+        };
+
+        $.ajax(settings)
+    .done(function (response) {
+        console.log("Respuesta del servidor:", response);
+
+        // Redirigir según la posición
+        switch (response.posicion) {
+            case 1: // USUARIO
+                alert("Inicio de sesión exitoso como USUARIO");
+                window.location.href = "/usuario/home.html"; // Ruta para usuario
+                break;
+            case 2: // EMPLEADO
+                alert("Inicio de sesión exitoso como EMPLEADO");
+                window.location.href = "/empleado/home.html"; // Ruta para empleado
+                break;
+            case 3: // PROFESOR
+                alert("Inicio de sesión exitoso como PROFESOR");
+                window.location.href = "/profesor/home.html"; // Ruta para profesor
+                break;
+        }
+    })
+    .fail(function (jqXHR, textStatus) {
+        console.error("Error en la solicitud:", textStatus);
+
+        // Manejo de errores
+        alert("Error al autenticar. Intente nuevamente.");
+
+        // Limpiar los campos de usuario y contraseña
+        usuarioInput.value = '';
+        passwordInput.value = '';
+    });
+    }
+});
+    </script>
+
+<script>
+    const canvas = document.getElementById('backgroundCanvas');
+    const ctx = canvas.getContext('2d');
+    const items = [];
+    const images = [
+        'images/cuaderno.png',
+        'images/borrador.png',
+        'images/lapiz.png',
+        'images/triangular-ruler.png',
+        'images/ruler.png',
+        'images/pencil.png',
+        'images/open-book.png',
+        'images/books.png'
+    ];
+
+    const ITEM_SIZE = 150; // Tamaño fijo para todas las imágenes
+    const MIN_SPEED = 0.75; // Velocidad mínima
+    const MAX_SPEED = 1.2; // Velocidad máxima
+
+    // Posiciones iniciales predefinidas
+    const predefinedPositions = [
+        { x: 50, y: 100 },
+        { x: 300, y: 200 },
+        { x: 900, y: 450},
+        { x: 1200, y: 400 },
+        { x: 200, y: 400 },
+        { x: 800, y: 100 },
+        { x: 500, y: 500 },
+        { x: 1300, y: 150 },
+    ];
+
+    // Configurar el tamaño del canvas
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Verificar si dos elementos están colisionando
+    function isColliding(item1, item2) {
+        const dx = item1.x + item1.size / 2 - (item2.x + item2.size / 2);
+        const dy = item1.y + item1.size / 2 - (item2.y + item2.size / 2);
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Si la distancia entre los centros es menor que la suma de los radios, están colisionando
+        return distance < (item1.size / 2 + item2.size / 2);
+    }
+
+    // Clase para los elementos flotantes
+    class FloatingItem {
+        constructor(imgSrc, x, y, size, speedX, speedY) {
+            this.img = new Image();
+            this.img.src = imgSrc;
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.speedX = speedX;
+            this.speedY = speedY;
+        }
+
+        draw() {
+            ctx.drawImage(this.img, this.x, this.y, this.size, this.size);
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            // Rebote en los bordes
+            if (this.x <= 0 || this.x + this.size >= canvas.width) this.speedX *= -1;
+            if (this.y <= 0 || this.y + this.size >= canvas.height) this.speedY *= -1;
+
+            // Detección de colisiones con otros objetos
+            items.forEach((otherItem) => {
+                if (this !== otherItem && isColliding(this, otherItem)) {
+                    // Cambia las velocidades para simular el rebote
+                    this.speedX *= -1;
+                    this.speedY *= -1;
+                    otherItem.speedX *= -1;
+                    otherItem.speedY *= -1;
+
+                    // Reposiciona los objetos para evitar superposición
+                    const overlap =
+                        (this.size / 2 + otherItem.size / 2) -
+                        Math.sqrt(
+                            Math.pow(this.x - otherItem.x, 2) +
+                            Math.pow(this.y - otherItem.y, 2)
+                        );
+
+                    const angle = Math.atan2(
+                        this.y - otherItem.y,
+                        this.x - otherItem.x
+                    );
+
+                    this.x += Math.cos(angle) * overlap / 2;
+                    this.y += Math.sin(angle) * overlap / 2;
+                    otherItem.x -= Math.cos(angle) * overlap / 2;
+                    otherItem.y -= Math.sin(angle) * overlap / 2;
+                }
+            });
+        }
+    }
+
+    // Crear elementos flotantes con posiciones iniciales fijas
+    predefinedPositions.forEach((pos, index) => {
+        const imgSrc = images[index % images.length];
+        const { x, y } = pos;
+
+        // Velocidad ajustada aleatoriamente dentro del rango
+        const speedX = Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED;
+        const speedY = Math.random() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED;
+
+        // Aleatoriamente invertir la dirección inicial
+        items.push(new FloatingItem(imgSrc, x, y, ITEM_SIZE, Math.random() > 0.5 ? speedX : -speedX, Math.random() > 0.5 ? speedY : -speedY));
+    });
+
+    // Animar los elementos
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        items.forEach((item) => {
+            item.update();
+            item.draw();
+        });
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+</script>
+</script>
+</body>
+</html>

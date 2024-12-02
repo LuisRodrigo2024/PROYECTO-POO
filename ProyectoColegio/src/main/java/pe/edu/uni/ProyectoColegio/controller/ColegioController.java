@@ -21,12 +21,14 @@ import pe.edu.uni.ProyectoColegio.dto.MatriculaDto;
 import pe.edu.uni.ProyectoColegio.dto.PagoDto;
 import pe.edu.uni.ProyectoColegio.service.ConsultasService;
 import pe.edu.uni.ProyectoColegio.service.HorarioService;
+import pe.edu.uni.ProyectoColegio.service.LoginService;
 import pe.edu.uni.ProyectoColegio.service.MatriculaService;
 import pe.edu.uni.ProyectoColegio.service.PagoService;
+import pe.edu.uni.ProyectoColegio.service.SeguridadService;
 
 @RestController
 @RequestMapping("/api/colegio")
-@CrossOrigin(origins = "//127.0.0.1:5500")
+@CrossOrigin(origins = "*")
 public class ColegioController {
 
     @Autowired
@@ -40,6 +42,22 @@ public class ColegioController {
     
     @Autowired
 	private ConsultasService consultasService;
+    @Autowired
+	private SeguridadService seguridadService;
+    @Autowired
+	private LoginService loginService;
+
+	@PostMapping("/login")
+	public ResponseEntity<?> login(String usuario, String clave){
+		Map<String,Object> rec = loginService.autenticar(usuario, clave);
+		if(rec!=null) {
+			return ResponseEntity.status(HttpStatus.CREATED).body(rec);
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Usuario no existe. ");
+		}
+	}
+
 
     @PostMapping("/pago")
     public ResponseEntity<?> realizarPago(@RequestBody PagoDto dto) {
@@ -51,6 +69,13 @@ public class ColegioController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Error en el proceso: " + e.getMessage());
 		}		
+    }
+    
+    @GetMapping("/pago/detallado")
+    public List<Map<String, Object>> obtenerPagosDetallados(
+            @RequestParam String fecha,
+            @RequestParam int alu_id) {
+        return consultasService.ConPagosDetallado(fecha, alu_id)  ;
     }
     
     @PostMapping("/matricula")
@@ -132,5 +157,16 @@ public class ColegioController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en el proceso: " + e.getMessage());
 		}
     }
+	
+	@PostMapping("/logon")
+	public ResponseEntity<?> logon(String usuario, String clave){
+		Map<String,Object> rec = seguridadService.validar(usuario, clave);
+		if(rec!=null) {
+			return ResponseEntity.status(HttpStatus.CREATED).body(rec);
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Usuario no existe. ");
+		}
+	}
     
 }
