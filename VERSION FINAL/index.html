@@ -249,10 +249,14 @@
         switch (response.posicion) {
             case 1: // EMPLEADO
                 alert("Inicio de sesión exitoso como EMPLEADO");
+                localStorage.setItem("userEmpCodigo", response.codigo);
+                localStorage.setItem("userEmpNombre", response.nombre);
                 window.location.href = "main.html"; // Ruta para usuario
                 break;
             case 2: // EMPLEADO
                 alert("Inicio de sesión exitoso como PROFESOR");
+                localStorage.setItem("userEmpCodigo", response.codigo);
+                localStorage.setItem("userEmpNombre", response.nombre);
                 window.location.href = "/empleado/home.html"; // Ruta para empleado
                 break;
             
