@@ -21,13 +21,13 @@ import pe.edu.uni.ProyectoColegio.dto.ProfesorJsonDto;
 
 @Service
 public class ConsultasService {
-	
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
+
 	public List<Map<String, Object>> ConPagosDetallado(String fecha, int alu_id) throws Exception {
-		
-		//Validar que el alumno exista
+
+		// Validar que el alumno exista
 		String sql = """
 				SELECT COUNT(*)
 				FROM ALUMNO
@@ -37,8 +37,8 @@ public class ConsultasService {
 		if (aux == 0) {
 			throw new Exception("Alumno no existe");
 		}
-		
-		//Validar que el alumno se encuentre matriculado
+
+		// Validar que el alumno se encuentre matriculado
 		sql = """
 				SELECT COUNT(*)
 				FROM MATRICULA
@@ -48,69 +48,68 @@ public class ConsultasService {
 		if (aux == 0) {
 			throw new Exception("Alumno no está matriculado");
 		}
-		
-	    // Definir la consulta SQL
-	    sql = """
-	    SELECT 
-	        CP.cro_id AS cro_id,
-	        CASE 
-	            WHEN CP.tipo_pago_id = 1 THEN 'MATRÍCULA'
-	            WHEN CP.tipo_pago_id = 2 THEN 'PENSIÓN'
-	            ELSE 'OTRO'
-	        END AS concepto,
-	        CP.cro_monto AS monto_base,
-	        CASE 
-	            WHEN P.pag_id IS NOT NULL THEN P.pag_importe - CP.cro_monto -- Mora calculada para pagos realizados
-	            ELSE 
-	                CASE 
-	                    WHEN DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) > 0 THEN 
-	                        DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) * 0.05 * CP.cro_monto
-	                    ELSE 0
-	                END
-	        END AS mora,
-	        CASE 
-	            WHEN P.pag_id IS NOT NULL THEN P.pag_importe -- Total pagado si el estado es PAGADO
-	            ELSE 
-	                CP.cro_monto + 
-	                CASE 
-	                    WHEN DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) > 0 THEN 
-	                        DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) * 0.05 * CP.cro_monto
-	                    ELSE 0
-	                END
-	        END AS monto_total,
-	        CASE 
-	            WHEN P.pag_id IS NOT NULL THEN 'PAGADO'
-	            ELSE 'PENDIENTE'
-	        END AS estado,
-	        FORMAT(CP.cro_fecha_prog, 'dd/MM/yyyy') AS fecha_limite
-	    FROM CRONOGRAMA_PAGO CP
-	    LEFT JOIN PAGO P ON CP.cro_id = P.cro_id
-	    INNER JOIN MATRICULA M ON CP.mat_id = M.mat_id
-	    WHERE M.alu_id = ?
-	      AND YEAR(CP.cro_fecha_prog) = YEAR(CONVERT(DATE, ?, 103));
-	    """;
 
-	    // Ejecutar la consulta y devolver los resultados
-	    return jdbcTemplate.queryForList(sql, fecha, fecha, fecha, fecha, alu_id, fecha);
-	    
+		// Definir la consulta SQL
+		sql = """
+				SELECT
+				    CP.cro_id AS cro_id,
+				    CASE
+				        WHEN CP.tipo_pago_id = 1 THEN 'MATRÍCULA'
+				        WHEN CP.tipo_pago_id = 2 THEN 'PENSIÓN'
+				        ELSE 'OTRO'
+				    END AS concepto,
+				    CP.cro_monto AS monto_base,
+				    CASE
+				        WHEN P.pag_id IS NOT NULL THEN P.pag_importe - CP.cro_monto -- Mora calculada para pagos realizados
+				        ELSE
+				            CASE
+				                WHEN DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) > 0 THEN
+				                    DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) * 0.05 * CP.cro_monto
+				                ELSE 0
+				            END
+				    END AS mora,
+				    CASE
+				        WHEN P.pag_id IS NOT NULL THEN P.pag_importe -- Total pagado si el estado es PAGADO
+				        ELSE
+				            CP.cro_monto +
+				            CASE
+				                WHEN DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) > 0 THEN
+				                    DATEDIFF(DAY, CP.cro_fecha_prog, CONVERT(DATE, ?, 103)) * 0.05 * CP.cro_monto
+				                ELSE 0
+				            END
+				    END AS monto_total,
+				    CASE
+				        WHEN P.pag_id IS NOT NULL THEN 'PAGADO'
+				        ELSE 'PENDIENTE'
+				    END AS estado,
+				    FORMAT(CP.cro_fecha_prog, 'dd/MM/yyyy') AS fecha_limite
+				FROM CRONOGRAMA_PAGO CP
+				LEFT JOIN PAGO P ON CP.cro_id = P.cro_id
+				INNER JOIN MATRICULA M ON CP.mat_id = M.mat_id
+				WHERE M.alu_id = ?
+				  AND YEAR(CP.cro_fecha_prog) = YEAR(CONVERT(DATE, ?, 103));
+				""";
+
+		// Ejecutar la consulta y devolver los resultados
+		return jdbcTemplate.queryForList(sql, fecha, fecha, fecha, fecha, alu_id, fecha);
+
 	}
 
-
 	public List<Map<String, Object>> idSecAnio(String nombre, int grado, String fecha) {
-	    // Definir la consulta SQL
-	    String sql = """
-	    SELECT 
-	    	S.sec_id AS sec_id,
-	    	S.sec_nombre AS sec_nombre
-	    FROM SECCION S
-	    WHERE S.sec_nombre = ?
-	    AND S.grad_id = ?
-	    AND S.anio_id = YEAR(CONVERT(DATE, ?, 103));
-	    """;
+		// Definir la consulta SQL
+		String sql = """
+				SELECT
+					S.sec_id AS sec_id,
+					S.sec_nombre AS sec_nombre
+				FROM SECCION S
+				WHERE S.sec_nombre = ?
+				AND S.grad_id = ?
+				AND S.anio_id = YEAR(CONVERT(DATE, ?, 103));
+				""";
 
-	    // Ejecutar la consulta y devolver los resultados
-	    return jdbcTemplate.queryForList(sql, nombre, grado, fecha);
-	    
+		// Ejecutar la consulta y devolver los resultados
+		return jdbcTemplate.queryForList(sql, nombre, grado, fecha);
+
 	}
 
 	public String cronogramaPago(int alu_id) throws Exception {
@@ -118,7 +117,7 @@ public class ConsultasService {
 		StringBuilder reporte = new StringBuilder();
 		List<FechapagoDto> lista = new LinkedList<>();
 		try {
-			
+
 			String sql = """
 					SELECT COUNT(*)
 					FROM ALUMNO
@@ -128,7 +127,7 @@ public class ConsultasService {
 			if (aux == 0) {
 				throw new Exception("Alumno no existe");
 			}
-			
+
 			sql = """
 					SELECT
 					COUNT(*)
@@ -139,7 +138,7 @@ public class ConsultasService {
 			if (aux == 0) {
 				throw new Exception("Alumno no está matriculado");
 			}
-			
+
 			sql = """
 					SELECT
 					cro_monto mensualidad,
@@ -170,7 +169,6 @@ public class ConsultasService {
 				reporte.append(String.format("%-15s %-27s %-27s%n", cuota, elemento.getMonto(), elemento.getFecha()));
 			}
 			reporte.append("------------------------------------------------------------------------\n");
-			
 
 		} catch (DataAccessException e) {
 			System.err.println("ERROR AL OBTENER LA INFORMACION: " + e.getMessage());
@@ -183,7 +181,7 @@ public class ConsultasService {
 		int contador = 0;
 		List<FechapagoDto> lista = new LinkedList<>();
 		try {
-			
+
 			String sql = """
 					SELECT COUNT(*)
 					FROM ALUMNO
@@ -193,7 +191,7 @@ public class ConsultasService {
 			if (aux == 0) {
 				throw new Exception("Alumno no existe");
 			}
-			
+
 			sql = """
 					SELECT
 					COUNT(*)
@@ -204,7 +202,7 @@ public class ConsultasService {
 			if (aux == 0) {
 				throw new Exception("Alumno no está matriculado");
 			}
-			
+
 			sql = """
 					SELECT
 					cro_monto mensualidad,
@@ -213,7 +211,7 @@ public class ConsultasService {
 					ON c.mat_id = m.mat_id
 					WHERE alu_id=?
 					""";
-			
+
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, alu_id);
 			for (Map<String, Object> row : rows) {
 				FechapagoDto dto = new FechapagoDto();
@@ -233,8 +231,8 @@ public class ConsultasService {
 
 	@SuppressWarnings("deprecation")
 	public CursosProfesorResponse cursosProfesor(int id_prof) throws Exception {
-	    String sql;
-	    CursosProfesorResponse response = new CursosProfesorResponse();
+		String sql;
+		CursosProfesorResponse response = new CursosProfesorResponse();
 		ProfesorDto pdto = new ProfesorDto();
 		List<ClasesDto> lista = new LinkedList<>();
 		try {
@@ -258,12 +256,9 @@ public class ConsultasService {
 					WHERE prof_id=?
 									 """;
 
-			pdto = jdbcTemplate.queryForObject(
-				    sql,
-				    new Object[]{id_prof},
-				    new BeanPropertyRowMapper<>(ProfesorDto.class)
-				);
-			
+			pdto = jdbcTemplate.queryForObject(sql, new Object[] { id_prof },
+					new BeanPropertyRowMapper<>(ProfesorDto.class));
+
 			sql = """
 					SELECT
 					CONCAT(a.grad_id, a.sec_nombre) seccion,
@@ -332,14 +327,14 @@ public class ConsultasService {
 			}
 
 			sql = """
-					SELECT
-					    CONVERT(VARCHAR(8), hor_inicio, 108) AS inicio,
-					    CONVERT(VARCHAR(8), hor_fin, 108) AS fin
-					FROM HORARIO
-					GROUP BY
-					    CONVERT(VARCHAR(8), hor_inicio, 108),
-					    CONVERT(VARCHAR(8), hor_fin, 108);
-				""";
+						SELECT
+						    CONVERT(VARCHAR(8), hor_inicio, 108) AS inicio,
+						    CONVERT(VARCHAR(8), hor_fin, 108) AS fin
+						FROM HORARIO
+						GROUP BY
+						    CONVERT(VARCHAR(8), hor_inicio, 108),
+						    CONVERT(VARCHAR(8), hor_fin, 108);
+					""";
 
 			List<Map<String, Object>> filas = jdbcTemplate.queryForList(sql);
 			for (Map<String, Object> fila : filas) {
@@ -391,7 +386,7 @@ public class ConsultasService {
 
 		return reporte.toString();
 	}
-	
+
 	public List<HorarioJsonDto> horarioJSON(int sec_id) throws Exception {
 		List<HorarioJsonDto> lista = new LinkedList<>();
 		String sql = "";
@@ -541,7 +536,7 @@ public class ConsultasService {
 
 		return lista;
 	}
-	
+
 	public List<HorarioJsonDto> horarioJsonProfesor(int prof_id) throws Exception {
 		List<HorarioJsonDto> lista = new LinkedList<>();
 		String sql = "";
@@ -556,155 +551,162 @@ public class ConsultasService {
 			if (aux == 0) {
 				throw new Exception("Profesor no existe");
 			}
-			
+
 			sql = """
-				DECLARE @PROFESOR_ID INT = ?;
-				DECLARE @HORA VARCHAR(8) = '';
-				DECLARE @FIN VARCHAR(8) = '';
-				DECLARE @contador INT = 1;
-				DECLARE @curso1 VARCHAR(30) = '';
-				DECLARE @curso2 VARCHAR(30) = '';
-				DECLARE @curso3 VARCHAR(30) = '';
-				DECLARE @curso4 VARCHAR(30) = '';
-				DECLARE @curso5 VARCHAR(30) = '';
-				
-				-- Tabla para almacenar los resultados
-				DECLARE @result TABLE (
-				    inicio VARCHAR(8),
-				    fin VARCHAR(8),
-				    lunes VARCHAR(30),
-				    martes VARCHAR(30),
-				    miercoles VARCHAR(30),
-				    jueves VARCHAR(30),
-				    viernes VARCHAR(30)
-				);
-				
-				-- Loop para procesar cada franja horaria (de 1 a 8)
-				WHILE @contador <= 8
-				BEGIN
-				    -- LUNES
-				    ;WITH RankedHoras AS (
-				        SELECT
-				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
-				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
-				            ISNULL(c.cur_nombre, '') AS nombre,
-				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
-				        FROM HORARIO h
-				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
-				        JOIN CURSO c ON sc.cur_id = c.cur_id
-				        WHERE h.hor_dia = 'LUNES' AND sc.prof_id = @PROFESOR_ID
-				    )
-				    SELECT @HORA = ISNULL(hora, ''),
-				           @FIN = ISNULL(fin, ''),
-				           @curso1 = ISNULL(nombre, '')
-				    FROM RankedHoras
-				    WHERE row_num = @contador;
-				
-				    IF @HORA != '' AND @FIN != ''
-				    BEGIN
-				        INSERT INTO @result (inicio, fin, lunes)
-				        VALUES (@HORA, @FIN, @curso1);
-				    END
-				
-				    -- MARTES
-				    ;WITH RankedHoras AS (
-				        SELECT
-				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
-				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
-				            ISNULL(c.cur_nombre, '') AS nombre,
-				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
-				        FROM HORARIO h
-				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
-				        JOIN CURSO c ON sc.cur_id = c.cur_id
-				        WHERE h.hor_dia = 'MARTES' AND sc.prof_id = @PROFESOR_ID
-				    )
-				    SELECT @HORA = ISNULL(hora, ''),
-				           @FIN = ISNULL(fin, ''),
-				           @curso2 = ISNULL(nombre, '')
-				    FROM RankedHoras
-				    WHERE row_num = @contador;
-				
-				    IF @HORA != '' AND @FIN != ''
-				    BEGIN
-				        UPDATE @result SET martes = @curso2 WHERE inicio = @HORA AND fin = @FIN;
-				    END
-				
-				    -- MIÉRCOLES
-				    ;WITH RankedHoras AS (
-				        SELECT
-				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
-				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
-				            ISNULL(c.cur_nombre, '') AS nombre,
-				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
-				        FROM HORARIO h
-				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
-				        JOIN CURSO c ON sc.cur_id = c.cur_id
-				        WHERE h.hor_dia = 'MIERCOLES' AND sc.prof_id = @PROFESOR_ID
-				    )
-				    SELECT @HORA = ISNULL(hora, ''),
-				           @FIN = ISNULL(fin, ''),
-				           @curso3 = ISNULL(nombre, '')
-				    FROM RankedHoras
-				    WHERE row_num = @contador;
-				
-				    IF @HORA != '' AND @FIN != ''
-				    BEGIN
-				        UPDATE @result SET miercoles = @curso3 WHERE inicio = @HORA AND fin = @FIN;
-				    END
-				
-				    -- JUEVES
-				    ;WITH RankedHoras AS (
-				        SELECT
-				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
-				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
-				            ISNULL(c.cur_nombre, '') AS nombre,
-				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
-				        FROM HORARIO h
-				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
-				        JOIN CURSO c ON sc.cur_id = c.cur_id
-				        WHERE h.hor_dia = 'JUEVES' AND sc.prof_id = @PROFESOR_ID
-				    )
-				    SELECT @HORA = ISNULL(hora, ''),
-				           @FIN = ISNULL(fin, ''),
-				           @curso4 = ISNULL(nombre, '')
-				    FROM RankedHoras
-				    WHERE row_num = @contador;
-				
-				    IF @HORA != '' AND @FIN != ''
-				    BEGIN
-				        UPDATE @result SET jueves = @curso4 WHERE inicio = @HORA AND fin = @FIN;
-				    END
-				
-				    -- VIERNES
-				    ;WITH RankedHoras AS (
-				        SELECT
-				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
-				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
-				            ISNULL(c.cur_nombre, '') AS nombre,
-				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
-				        FROM HORARIO h
-				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
-				        JOIN CURSO c ON sc.cur_id = c.cur_id
-				        WHERE h.hor_dia = 'VIERNES' AND sc.prof_id = @PROFESOR_ID
-				    )
-				    SELECT @HORA = ISNULL(hora, ''),
-				           @FIN = ISNULL(fin, ''),
-				           @curso5 = ISNULL(nombre, '')
-				    FROM RankedHoras
-				    WHERE row_num = @contador;
-				
-				    IF @HORA != '' AND @FIN != ''
-				    BEGIN
-				        UPDATE @result SET viernes = @curso5 WHERE inicio = @HORA AND fin = @FIN;
-				    END
-				
-				    -- Incrementar el contador para la siguiente franja horaria
-				    SET @contador = @contador + 1;
-				END
-				
-				-- Ver el resultado final
-				SELECT * FROM @result;
-																				         """;
+					DECLARE @PROFESOR_ID INT = ?;
+					DECLARE @HORA VARCHAR(8) = '';
+					DECLARE @FIN VARCHAR(8) = '';
+					DECLARE @contador INT = 1;
+					DECLARE @curso1 VARCHAR(30) = '';
+					DECLARE @curso2 VARCHAR(30) = '';
+					DECLARE @curso3 VARCHAR(30) = '';
+					DECLARE @curso4 VARCHAR(30) = '';
+					DECLARE @curso5 VARCHAR(30) = '';
+
+					-- Tabla para almacenar los resultados
+					DECLARE @result TABLE (
+					    inicio VARCHAR(8),
+					    fin VARCHAR(8),
+					    lunes VARCHAR(30),
+					    martes VARCHAR(30),
+					    miercoles VARCHAR(30),
+					    jueves VARCHAR(30),
+					    viernes VARCHAR(30)
+					);
+
+					-- Loop para procesar cada franja horaria (de 1 a 8)
+					WHILE @contador <= 8
+					BEGIN
+					    -- LUNES
+					    ;WITH RankedHoras AS (
+					        SELECT
+					            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+					            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+					            ISNULL(c.cur_nombre, '') AS nombre,
+					            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+					        FROM HORARIO h
+					        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+					        JOIN CURSO c ON sc.cur_id = c.cur_id
+					        WHERE h.hor_dia = 'LUNES' AND sc.prof_id = @PROFESOR_ID
+					    )
+					    SELECT @HORA = ISNULL(hora, ''),
+					           @FIN = ISNULL(fin, ''),
+					           @curso1 = ISNULL(nombre, 'VACIO')
+					    FROM RankedHoras
+					    WHERE row_num = @contador;
+
+					    IF @HORA != '' AND @FIN != ''
+					    BEGIN
+					        INSERT INTO @result (inicio, fin, lunes)
+					        VALUES (@HORA, @FIN, @curso1);
+					    END
+
+					    -- MARTES
+					    ;WITH RankedHoras AS (
+					        SELECT
+					            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+					            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+					            ISNULL(c.cur_nombre, '') AS nombre,
+					            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+					        FROM HORARIO h
+					        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+					        JOIN CURSO c ON sc.cur_id = c.cur_id
+					        WHERE h.hor_dia = 'MARTES' AND sc.prof_id = @PROFESOR_ID
+					    )
+					    SELECT @HORA = ISNULL(hora, ''),
+					           @FIN = ISNULL(fin, ''),
+					           @curso2 = ISNULL(nombre, 'VACIO')
+					    FROM RankedHoras
+					    WHERE row_num = @contador;
+
+					    IF @HORA != '' AND @FIN != ''
+					    BEGIN
+					        UPDATE @result SET martes = @curso2 WHERE inicio = @HORA AND fin = @FIN;
+					    END
+
+					    -- MIÉRCOLES
+					    ;WITH RankedHoras AS (
+					        SELECT
+					            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+					            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+					            ISNULL(c.cur_nombre, '') AS nombre,
+					            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+					        FROM HORARIO h
+					        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+					        JOIN CURSO c ON sc.cur_id = c.cur_id
+					        WHERE h.hor_dia = 'MIERCOLES' AND sc.prof_id = @PROFESOR_ID
+					    )
+					    SELECT @HORA = ISNULL(hora, ''),
+					           @FIN = ISNULL(fin, ''),
+					           @curso3 = ISNULL(nombre, 'VACIO')
+					    FROM RankedHoras
+					    WHERE row_num = @contador;
+
+					    IF @HORA != '' AND @FIN != ''
+					    BEGIN
+					        UPDATE @result SET miercoles = @curso3 WHERE inicio = @HORA AND fin = @FIN;
+					    END
+
+					    -- JUEVES
+					    ;WITH RankedHoras AS (
+					        SELECT
+					            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+					            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+					            ISNULL(c.cur_nombre, '') AS nombre,
+					            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+					        FROM HORARIO h
+					        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+					        JOIN CURSO c ON sc.cur_id = c.cur_id
+					        WHERE h.hor_dia = 'JUEVES' AND sc.prof_id = @PROFESOR_ID
+					    )
+					    SELECT @HORA = ISNULL(hora, ''),
+					           @FIN = ISNULL(fin, ''),
+					           @curso4 = ISNULL(nombre, 'VACIO')
+					    FROM RankedHoras
+					    WHERE row_num = @contador;
+
+					    IF @HORA != '' AND @FIN != ''
+					    BEGIN
+					        UPDATE @result SET jueves = @curso4 WHERE inicio = @HORA AND fin = @FIN;
+					    END
+
+					    -- VIERNES
+					    ;WITH RankedHoras AS (
+					        SELECT
+					            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+					            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+					            ISNULL(c.cur_nombre, '') AS nombre,
+					            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+					        FROM HORARIO h
+					        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+					        JOIN CURSO c ON sc.cur_id = c.cur_id
+					        WHERE h.hor_dia = 'VIERNES' AND sc.prof_id = @PROFESOR_ID
+					    )
+					    SELECT @HORA = ISNULL(hora, ''),
+					           @FIN = ISNULL(fin, ''),
+					           @curso5 = ISNULL(nombre, 'VACIO')
+					    FROM RankedHoras
+					    WHERE row_num = @contador;
+
+					    IF @HORA != '' AND @FIN != ''
+					    BEGIN
+					        UPDATE @result SET viernes = @curso5 WHERE inicio = @HORA AND fin = @FIN;
+					    END
+
+					    -- Incrementar el contador para la siguiente franja horaria
+					    SET @contador = @contador + 1;
+					END
+
+					-- Ver el resultado final
+					SELECT inicio, fin,
+					       ISNULL(lunes, 'VACIO') AS lunes,
+					       ISNULL(martes, 'VACIO') AS martes,
+					       ISNULL(miercoles, 'VACIO') AS miercoles,
+					       ISNULL(jueves, 'VACIO') AS jueves,
+					       ISNULL(viernes, 'VACIO') AS viernes
+					FROM @result;
+
+																									         """;
 
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, prof_id);
 			for (Map<String, Object> row : rows) {
@@ -725,40 +727,39 @@ public class ConsultasService {
 
 		return lista;
 	}
-	
+
 	public List<ProfesorJsonDto> ProfesorDatos(int sec_id) throws Exception {
-		
+
 		List<ProfesorJsonDto> lista = new LinkedList<>();
 		String sql = "";
-			sql = """
-					SELECT
-					COUNT(h.hor_id)
-					FROM HORARIO h
-					JOIN SECCION_CURSO s ON h.asig_id = s.asig_id
-					WHERE s.sec_id = ?;
-										""";
-			int aux = jdbcTemplate.queryForObject(sql, Integer.class, sec_id);
-			if (aux == 0) {
-				throw new Exception("La sección no existe");
-			}
-			
-			sql = """
+		sql = """
+				SELECT
+				COUNT(h.hor_id)
+				FROM HORARIO h
+				JOIN SECCION_CURSO s ON h.asig_id = s.asig_id
+				WHERE s.sec_id = ?;
+									""";
+		int aux = jdbcTemplate.queryForObject(sql, Integer.class, sec_id);
+		if (aux == 0) {
+			throw new Exception("La sección no existe");
+		}
+
+		sql = """
 				SELECT c.cur_nombre curso, CONCAT(p.prof_nombre,' ',p.prof_apellido) profesor
 				FROM SECCION_CURSO sc
 				JOIN PROFESOR p ON sc.prof_id = p.prof_id
 				JOIN CURSO c ON sc.cur_id = c.cur_id
 				WHERE sc.sec_id = ?
 					""";
-			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, sec_id);
-			for (Map<String, Object> row : rows) {
-				ProfesorJsonDto dto = new ProfesorJsonDto();
-				dto.setCurso(row.get("curso").toString());
-				dto.setProfesor(row.get("profesor").toString());
-				lista.add(dto);
-			}
-			
-			return lista;
-			
-		
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, sec_id);
+		for (Map<String, Object> row : rows) {
+			ProfesorJsonDto dto = new ProfesorJsonDto();
+			dto.setCurso(row.get("curso").toString());
+			dto.setProfesor(row.get("profesor").toString());
+			lista.add(dto);
+		}
+
+		return lista;
+
 	}
 }
