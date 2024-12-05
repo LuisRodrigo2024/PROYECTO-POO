@@ -25,8 +25,10 @@
         }
 
         .card-header {
-            background-color: #A51C30; /* Rojo Harvard */
-            color: #FFC72C; /* Amarillo dorado */
+            background-color: #A51C30;
+            /* Rojo Harvard */
+            color: #FFC72C;
+            /* Amarillo dorado */
             text-align: center;
         }
 
@@ -65,22 +67,55 @@
         }
 
         #horarioTabla thead th {
-            background-color: #343a40; /* Oscuro */
-            color: #FFC72C; /* Amarillo dorado */
+            background-color: #343a40;
+            /* Oscuro */
+            color: #FFC72C;
+            /* Amarillo dorado */
             text-align: center;
         }
 
         #horarioTabla tbody tr {
-            background-color: #F9F9F9; /* Fondo claro */
+            background-color: #F9F9F9;
+            /* Fondo claro */
         }
 
         #horarioTabla tbody tr:nth-child(even) {
-            background-color: #EFEFEF; /* Fondo más claro */
+            background-color: #EFEFEF;
+            /* Fondo más claro */
         }
 
         #horarioTabla td {
             text-align: center;
         }
+
+        /* Tabla */
+        #profTabla {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #profTabla thead th {
+            background-color: #343a40;
+            /* Oscuro */
+            color: #FFC72C;
+            /* Amarillo dorado */
+            text-align: center;
+        }
+
+        #profTabla tbody tr {
+            background-color: #F9F9F9;
+            /* Fondo claro */
+        }
+
+        #profTabla tbody tr:nth-child(even) {
+            background-color: #EFEFEF;
+            /* Fondo más claro */
+        }
+
+        #profTabla td {
+            text-align: center;
+        }
+
 
         /* Botón Flotante */
         #btnDownload {
@@ -119,7 +154,6 @@
             color: #FFC72C;
             border: none;
         }
-        
     </style>
 </head>
 
@@ -138,7 +172,8 @@
                             <span class="input-group-text">
                                 <i class="fas fa-users"></i>
                             </span>
-                            <input type="text" class="form-control" id="sec_id" name="sec_id" placeholder="Ingrese el ID de la sección" required>
+                            <input type="text" class="form-control" id="sec_id" name="sec_id"
+                                placeholder="Ingrese el ID de la sección" required>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-block" id="btnSearch">
@@ -162,6 +197,17 @@
                         <!-- Datos dinámicos -->
                     </tbody>
                 </table>
+                <table id="profTabla" class="table table-striped table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Curso</th>
+                            <th>Profesor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos dinámicos -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -179,15 +225,16 @@
         const inputSecId = document.getElementById('sec_id');
         const resultDiv = document.getElementById('result');
         const tablaCuerpo = document.querySelector("#horarioTabla tbody");
+        const tablaCuerpoprof = document.querySelector("#profTabla tbody");
         const btnDownload = document.getElementById('btnDownload');
-    
+
         // Ocultar botón de descarga al inicio
         btnDownload.style.display = 'none';
-    
+
         formHorario.addEventListener('submit', (e) => {
             e.preventDefault();
             const secId = inputSecId.value.trim();
-    
+
             if (!secId || !/^\d+$/.test(secId)) {
                 Swal.fire({
                     icon: 'warning',
@@ -201,7 +248,7 @@
                 limpiarHorario();
                 return;
             }
-    
+
             Swal.fire({
                 title: 'Buscando...',
                 text: 'Por favor, espera mientras se consulta el horario.',
@@ -210,7 +257,7 @@
                     Swal.showLoading();
                 }
             });
-    
+
             fetch(`http://localhost:8080/api/colegio/horariojson?sec_id=${secId}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Error al consultar el horario');
@@ -255,8 +302,53 @@
                         iconColor: '#FFC72C'
                     });
                 });
+
+            fetch(`http://localhost:8080/api/colegio/datosprofesor?sec_id=${secId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Error al ralizar la consulta');
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.close();
+                    if (data.length > 0) {
+                        llenarTablap(data);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Horario Cargado',
+                            text: 'El horario se ha cargado exitosamente.',
+                            background: '#A51C30',
+                            color: '#FFC72C',
+                            confirmButtonColor: '#FFC72C',
+                            iconColor: '#FFC72C'
+                        });
+                    } else {
+                        limpiarHorario();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Horario No Encontrado',
+                            text: 'No se encontró un horario para la sección ingresada.',
+                            background: '#FDF5E6',
+                            color: '#A51C30',
+                            confirmButtonColor: '#FFC72C',
+                            iconColor: '#FFC72C'
+                        });
+                    }
+                })
+                .catch(err => {
+                    limpiarHorario();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo obtener el horario.',
+                        background: '#FDF5E6',
+                        color: '#A51C30',
+                        confirmButtonColor: '#FFC72C',
+                        iconColor: '#FFC72C'
+                    });
+                });
+
         });
-    
+
         function llenarTabla(horario) {
             tablaCuerpo.innerHTML = '';
             horario.forEach(item => {
@@ -273,21 +365,59 @@
                 tablaCuerpo.insertAdjacentHTML('beforeend', fila);
             });
         }
-    
+
+        function llenarTablap(profesorcurso) {
+            tablaCuerpoprof.innerHTML = '';
+            profesorcurso.forEach(item => {
+                const fila = `
+                    <tr>
+                        <td>${item.curso || 'N/A'}</td>
+                        <td>${item.profesor || 'N/A'}</td>
+                    </tr>`;
+                tablaCuerpoprof.insertAdjacentHTML('beforeend', fila);
+            });
+        }
+
         function limpiarHorario() {
             tablaCuerpo.innerHTML = '';
             btnDownload.style.display = 'none';
         }
-    
+
+
+
         btnDownload.addEventListener('click', () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
+
+            // Agregar título para la primera tabla
             doc.text('Horario de Sección', 105, 10, { align: 'center' });
-            doc.autoTable({ html: '#horarioTabla', startY: 20, theme: 'grid' });
+
+            // Crear la primera tabla
+            let finalY = 20; // Coordenada inicial para la primera tabla
+            doc.autoTable({
+                html: '#horarioTabla',
+                startY: finalY,
+                theme: 'grid'
+            });
+
+            // Obtener la posición final de la primera tabla
+            finalY = doc.lastAutoTable.finalY + 10; // Agregar un margen entre las tablas
+
+            // Agregar título para la segunda tabla
+            doc.text('Curso/Profesor', 105, finalY, { align: 'center' });
+
+            // Crear la segunda tabla
+            doc.autoTable({
+                html: '#profTabla',
+                startY: finalY + 10, // Espacio debajo del título
+                theme: 'grid'
+            });
+
+            // Guardar el PDF
             doc.save('Horario.pdf');
         });
+
     </script>
 </body>
 
 </html>
-

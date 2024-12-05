@@ -20,6 +20,7 @@ import pe.edu.uni.ProyectoColegio.dto.FechapagoDto;
 import pe.edu.uni.ProyectoColegio.dto.HorarioJsonDto;
 import pe.edu.uni.ProyectoColegio.dto.MatriculaDto;
 import pe.edu.uni.ProyectoColegio.dto.PagoDto;
+import pe.edu.uni.ProyectoColegio.dto.ProfesorJsonDto;
 import pe.edu.uni.ProyectoColegio.service.ConsultasService;
 import pe.edu.uni.ProyectoColegio.service.HorarioService;
 import pe.edu.uni.ProyectoColegio.service.LoginService;
@@ -200,6 +201,28 @@ public class ColegioController {
 		List<HorarioJsonDto> reporte;
         try {
         	reporte = consultasService.horarioJSON(sec_id);
+        	return ResponseEntity.ok(reporte);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en el proceso: " + e.getMessage());
+		}
+    }
+	
+	@GetMapping("/horariojsonprofesor")
+    public ResponseEntity<?> getHorariosjsonprofesor(@RequestParam("prof_id")  int prof_id) {
+		List<HorarioJsonDto> reporte;
+        try {
+        	reporte = consultasService.horarioJsonProfesor(prof_id);
+        	return ResponseEntity.ok(reporte);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en el proceso: " + e.getMessage());
+		}
+    }
+	
+	@GetMapping("/datosprofesor")
+    public ResponseEntity<?> getDatos(@RequestParam("sec_id")  int sec_id) {
+		List<ProfesorJsonDto> reporte;
+        try {
+        	reporte = consultasService.ProfesorDatos(sec_id);
         	return ResponseEntity.ok(reporte);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en el proceso: " + e.getMessage());

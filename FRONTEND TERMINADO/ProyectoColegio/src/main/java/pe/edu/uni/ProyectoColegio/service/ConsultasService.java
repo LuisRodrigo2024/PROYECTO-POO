@@ -17,6 +17,7 @@ import pe.edu.uni.ProyectoColegio.dto.HoraDto;
 import pe.edu.uni.ProyectoColegio.dto.HorarioDto;
 import pe.edu.uni.ProyectoColegio.dto.HorarioJsonDto;
 import pe.edu.uni.ProyectoColegio.dto.ProfesorDto;
+import pe.edu.uni.ProyectoColegio.dto.ProfesorJsonDto;
 
 @Service
 public class ConsultasService {
@@ -539,5 +540,225 @@ public class ConsultasService {
 		}
 
 		return lista;
+	}
+	
+	public List<HorarioJsonDto> horarioJsonProfesor(int prof_id) throws Exception {
+		List<HorarioJsonDto> lista = new LinkedList<>();
+		String sql = "";
+		try {
+			sql = """
+					SELECT
+					COUNT(*)
+					FROM PROFESOR
+					WHERE prof_id = ?;
+										""";
+			int aux = jdbcTemplate.queryForObject(sql, Integer.class, prof_id);
+			if (aux == 0) {
+				throw new Exception("Profesor no existe");
+			}
+			
+			sql = """
+				DECLARE @PROFESOR_ID INT = ?;
+				DECLARE @HORA VARCHAR(8) = '';
+				DECLARE @FIN VARCHAR(8) = '';
+				DECLARE @contador INT = 1;
+				DECLARE @curso1 VARCHAR(30) = '';
+				DECLARE @curso2 VARCHAR(30) = '';
+				DECLARE @curso3 VARCHAR(30) = '';
+				DECLARE @curso4 VARCHAR(30) = '';
+				DECLARE @curso5 VARCHAR(30) = '';
+				
+				-- Tabla para almacenar los resultados
+				DECLARE @result TABLE (
+				    inicio VARCHAR(8),
+				    fin VARCHAR(8),
+				    lunes VARCHAR(30),
+				    martes VARCHAR(30),
+				    miercoles VARCHAR(30),
+				    jueves VARCHAR(30),
+				    viernes VARCHAR(30)
+				);
+				
+				-- Loop para procesar cada franja horaria (de 1 a 8)
+				WHILE @contador <= 8
+				BEGIN
+				    -- LUNES
+				    ;WITH RankedHoras AS (
+				        SELECT
+				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+				            ISNULL(c.cur_nombre, '') AS nombre,
+				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+				        FROM HORARIO h
+				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+				        JOIN CURSO c ON sc.cur_id = c.cur_id
+				        WHERE h.hor_dia = 'LUNES' AND sc.prof_id = @PROFESOR_ID
+				    )
+				    SELECT @HORA = ISNULL(hora, ''),
+				           @FIN = ISNULL(fin, ''),
+				           @curso1 = ISNULL(nombre, '')
+				    FROM RankedHoras
+				    WHERE row_num = @contador;
+				
+				    IF @HORA != '' AND @FIN != ''
+				    BEGIN
+				        INSERT INTO @result (inicio, fin, lunes)
+				        VALUES (@HORA, @FIN, @curso1);
+				    END
+				
+				    -- MARTES
+				    ;WITH RankedHoras AS (
+				        SELECT
+				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+				            ISNULL(c.cur_nombre, '') AS nombre,
+				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+				        FROM HORARIO h
+				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+				        JOIN CURSO c ON sc.cur_id = c.cur_id
+				        WHERE h.hor_dia = 'MARTES' AND sc.prof_id = @PROFESOR_ID
+				    )
+				    SELECT @HORA = ISNULL(hora, ''),
+				           @FIN = ISNULL(fin, ''),
+				           @curso2 = ISNULL(nombre, '')
+				    FROM RankedHoras
+				    WHERE row_num = @contador;
+				
+				    IF @HORA != '' AND @FIN != ''
+				    BEGIN
+				        UPDATE @result SET martes = @curso2 WHERE inicio = @HORA AND fin = @FIN;
+				    END
+				
+				    -- MIÉRCOLES
+				    ;WITH RankedHoras AS (
+				        SELECT
+				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+				            ISNULL(c.cur_nombre, '') AS nombre,
+				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+				        FROM HORARIO h
+				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+				        JOIN CURSO c ON sc.cur_id = c.cur_id
+				        WHERE h.hor_dia = 'MIERCOLES' AND sc.prof_id = @PROFESOR_ID
+				    )
+				    SELECT @HORA = ISNULL(hora, ''),
+				           @FIN = ISNULL(fin, ''),
+				           @curso3 = ISNULL(nombre, '')
+				    FROM RankedHoras
+				    WHERE row_num = @contador;
+				
+				    IF @HORA != '' AND @FIN != ''
+				    BEGIN
+				        UPDATE @result SET miercoles = @curso3 WHERE inicio = @HORA AND fin = @FIN;
+				    END
+				
+				    -- JUEVES
+				    ;WITH RankedHoras AS (
+				        SELECT
+				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+				            ISNULL(c.cur_nombre, '') AS nombre,
+				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+				        FROM HORARIO h
+				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+				        JOIN CURSO c ON sc.cur_id = c.cur_id
+				        WHERE h.hor_dia = 'JUEVES' AND sc.prof_id = @PROFESOR_ID
+				    )
+				    SELECT @HORA = ISNULL(hora, ''),
+				           @FIN = ISNULL(fin, ''),
+				           @curso4 = ISNULL(nombre, '')
+				    FROM RankedHoras
+				    WHERE row_num = @contador;
+				
+				    IF @HORA != '' AND @FIN != ''
+				    BEGIN
+				        UPDATE @result SET jueves = @curso4 WHERE inicio = @HORA AND fin = @FIN;
+				    END
+				
+				    -- VIERNES
+				    ;WITH RankedHoras AS (
+				        SELECT
+				            CONVERT(VARCHAR(8), h.hor_inicio, 108) AS hora,
+				            CONVERT(VARCHAR(8), h.hor_fin, 108) AS fin,
+				            ISNULL(c.cur_nombre, '') AS nombre,
+				            ROW_NUMBER() OVER (ORDER BY h.hor_inicio) AS row_num
+				        FROM HORARIO h
+				        JOIN SECCION_CURSO sc ON h.asig_id = sc.asig_id
+				        JOIN CURSO c ON sc.cur_id = c.cur_id
+				        WHERE h.hor_dia = 'VIERNES' AND sc.prof_id = @PROFESOR_ID
+				    )
+				    SELECT @HORA = ISNULL(hora, ''),
+				           @FIN = ISNULL(fin, ''),
+				           @curso5 = ISNULL(nombre, '')
+				    FROM RankedHoras
+				    WHERE row_num = @contador;
+				
+				    IF @HORA != '' AND @FIN != ''
+				    BEGIN
+				        UPDATE @result SET viernes = @curso5 WHERE inicio = @HORA AND fin = @FIN;
+				    END
+				
+				    -- Incrementar el contador para la siguiente franja horaria
+				    SET @contador = @contador + 1;
+				END
+				
+				-- Ver el resultado final
+				SELECT * FROM @result;
+																				         """;
+
+			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, prof_id);
+			for (Map<String, Object> row : rows) {
+				HorarioJsonDto dto = new HorarioJsonDto();
+				dto.setInicio(row.get("inicio").toString());
+				dto.setFin(row.get("fin").toString());
+				dto.setLunes(row.get("lunes").toString());
+				dto.setMartes(row.get("martes").toString());
+				dto.setMiercoles(row.get("miercoles").toString());
+				dto.setJueves(row.get("jueves").toString());
+				dto.setViernes(row.get("viernes").toString());
+				lista.add(dto);
+			}
+
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
+
+		return lista;
+	}
+	
+	public List<ProfesorJsonDto> ProfesorDatos(int sec_id) throws Exception {
+		
+		List<ProfesorJsonDto> lista = new LinkedList<>();
+		String sql = "";
+			sql = """
+					SELECT
+					COUNT(h.hor_id)
+					FROM HORARIO h
+					JOIN SECCION_CURSO s ON h.asig_id = s.asig_id
+					WHERE s.sec_id = ?;
+										""";
+			int aux = jdbcTemplate.queryForObject(sql, Integer.class, sec_id);
+			if (aux == 0) {
+				throw new Exception("La sección no existe");
+			}
+			
+			sql = """
+				SELECT c.cur_nombre curso, CONCAT(p.prof_nombre,' ',p.prof_apellido) profesor
+				FROM SECCION_CURSO sc
+				JOIN PROFESOR p ON sc.prof_id = p.prof_id
+				JOIN CURSO c ON sc.cur_id = c.cur_id
+				WHERE sc.sec_id = ?
+					""";
+			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, sec_id);
+			for (Map<String, Object> row : rows) {
+				ProfesorJsonDto dto = new ProfesorJsonDto();
+				dto.setCurso(row.get("curso").toString());
+				dto.setProfesor(row.get("profesor").toString());
+				lista.add(dto);
+			}
+			
+			return lista;
+			
+		
 	}
 }
