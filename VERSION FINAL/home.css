@@ -35,6 +35,7 @@ header {
     align-items: center;
 }
 
+
 .contenedor-encabezado ul{
     list-style: none;
     display: flex;
@@ -59,6 +60,16 @@ nav ul li {
     font-size: 20px;
     font-weight: bold;
 }
+#titulo {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+    color: #AD3636;
+    font-size: 50px;
+    font-weight: bold;
+}
+
+
 
 #linkact {
     pointer-events: none;

@@ -24,10 +24,32 @@ public class ConsultasService {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	public List<Map<String, Object>> ConPagosDetallado(String fecha, int alu_id) {
+	public List<Map<String, Object>> ConPagosDetallado(String fecha, int alu_id) throws Exception {
+		
+		//Validar que el alumno exista
+		String sql = """
+				SELECT COUNT(*)
+				FROM ALUMNO
+				WHERE alu_id = ?
+									""";
+		int aux = jdbcTemplate.queryForObject(sql, Integer.class, alu_id);
+		if (aux == 0) {
+			throw new Exception("Alumno no existe");
+		}
+		
+		//Validar que el alumno se encuentre matriculado
+		sql = """
+				SELECT COUNT(*)
+				FROM MATRICULA
+				WHERE alu_id = ?
+									""";
+		aux = jdbcTemplate.queryForObject(sql, Integer.class, alu_id);
+		if (aux == 0) {
+			throw new Exception("Alumno no está matriculado");
+		}
 		
 	    // Definir la consulta SQL
-	    String sql = """
+	    sql = """
 	    SELECT 
 	        CP.cro_id AS cro_id,
 	        CASE 

@@ -95,11 +95,16 @@ public class ColegioController {
     }
     
     @GetMapping("/pago/detallado")
-    public List<Map<String, Object>> obtenerPagosDetallados(
-            @RequestParam String fecha,
-            @RequestParam int alu_id) {
-        return consultasService.ConPagosDetallado(fecha, alu_id)  ;
+    public ResponseEntity<?> obtenerPagosDetallados(@RequestParam String fecha, @RequestParam int alu_id) {
+        try {
+            List<Map<String, Object>> resultado = consultasService.ConPagosDetallado(fecha, alu_id);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Error en el proceso: " + e.getMessage());
+        }
     }
+
     
     @PostMapping("/matricula")
 	public ResponseEntity<?> matricula(@RequestBody MatriculaDto bean){
