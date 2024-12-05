@@ -9,79 +9,81 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pe.edu.uni.ProyectoColegio.dto.MatriculaDto;
 
-
-
 @Service
 public class MatriculaService {
+	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
 	public MatriculaDto proc_Matricula(MatriculaDto bean) {
-		//DATOS DTO 
+		
+		//Datos Dto
 	    int alu_id=bean.getAlu_id();
 	    int sec_id=bean.getSec_id();
 	    int  emp_id=bean.getEmp_id();
 	    String mat_tipo=bean.getMat_tipo();
 	    String mat_fecha=bean.getMat_fecha();
 	    String mat_estado="1";
-	    //auxiliar 
+	    
+	    //auxiliar
 	    double costo;
 	   
 		// Validaciones
 	    
-	  //validar seccion
-	    validarSeccion(sec_id);
+	    	//validar seccion
+	    	validarSeccion(sec_id);
 	    
-	   //validar si existen vacantes en la seccion
-	    validarVacantesSeccion(sec_id);
+	    	//validar si existen vacantes en la seccion
+	    	validarVacantesSeccion(sec_id);
 	    
-	    //validando alumno
-	    validarAlumno(alu_id, sec_id);
+	    	//validando alumno
+	    	validarAlumno(alu_id, sec_id);
 	    
-	    //validar empleado
-	    validarEmpleado(emp_id);
+	    	//validar empleado
+	    	validarEmpleado(emp_id);
 	    
-	    //validar tipo sea beca , regular
-	    mat_tipo=validarTipo(mat_tipo);
-	    bean.setMat_tipo(mat_tipo);
+	    	//validar tipo sea beca , regular
+	    	mat_tipo=validarTipo(mat_tipo);
+	    	bean.setMat_tipo(mat_tipo);
 	    
 	    
-	    //valdiar fecha ingresada en formato dd/mm/aa
-	    bean.setMat_fecha( validarFecha(mat_fecha));
-	    mat_fecha=validarFecha(mat_fecha);
+	    	//valdiar fecha ingresada en formato dd/mm/aa
+	    	bean.setMat_fecha( validarFecha(mat_fecha));
+	    	mat_fecha=validarFecha(mat_fecha);
 	    
-	    // VALIDAR ANIO DE MATRICULA 
-	    validarAnio(sec_id, mat_fecha);
+	    	// VALIDAR ANIO DE MATRICULA 
+	    	validarAnio(sec_id, mat_fecha);
 	   
-	    
-	   //validar seccion 
-	    int val=validarAlumnoNuevo(alu_id);
-	    if(val!=0) {
-	    	validarSeccionAlumno(alu_id, sec_id); 
-	    	validarMatriculaAlumno(alu_id, sec_id);
-	    }   
+	    	//validar seccion 
+	    	int val=validarAlumnoNuevo(alu_id);
+	    	if(val!=0) {
+	    		validarSeccionAlumno(alu_id, sec_id); 
+	    		validarMatriculaAlumno(alu_id, sec_id);
+	    	}   
 	    
 	  
 	    //Actualizando estado
 	    bean.setMat_estado(mat_estado);
+	    
 	    //Registro de la tabla Matricula
 	    registrarMatricula(alu_id, sec_id, emp_id, mat_tipo, mat_fecha, mat_estado);
+	    
 	    //Actualizando vacantes 
 	    actualizarVacantes(sec_id);
 	    
 	    //Calculando costo x tipo 
 	    costo =costo_Tipo(mat_tipo);
-	    
 
 	    //generando cronograma de pagos para el alumno
 	    registrarCronograma(sec_id, mat_fecha, costo);
 	    
-
 		return bean;
 	}
 	
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void validarVacantesSeccion(int sec_id) {
+		
 	    // Consulta SQL para obtener la diferencia entre vacantes y matriculados
 	    String sql = """
 	        SELECT sec_vacantes - sec_matriculados AS vac_dis
@@ -96,6 +98,7 @@ public class MatriculaService {
 	    if (vacantesDisponibles == null || vacantesDisponibles <= 0) {
 	        throw new RuntimeException("No hay vacantes disponibles en esta sección.");
 	    }
+	    
 	}
 
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
@@ -108,10 +111,12 @@ public class MatriculaService {
 	    """;
 
 	    jdbcTemplate.update(sql, alu_id, sec_id, emp_id, mat_tipo, mat_fecha, mat_estado);
+	    
 	}
 
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void actualizarVacantes(int secId) {
+		
 	    String sql = """
 	        UPDATE SECCION
 	        SET sec_matriculados = sec_matriculados + 1,
@@ -124,11 +129,13 @@ public class MatriculaService {
 	    if (rowsUpdated != 1) {
 	        throw new RuntimeException("La sección de ID: " + secId + " no existe");
 	    }
+	    
 	}
 	
 
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void registrarCronograma(int sec_id, String mat_fecha, double costo) {
+		
 	    // Obtener el ID de la última inserción
 	    String sql = """
 	        SELECT @@IDENTITY AS cro_id
@@ -176,6 +183,7 @@ public class MatriculaService {
 	    """;
 
 	    jdbcTemplate.update(sql, cro_id, anio, costo);
+	    
 	}
 
 	
@@ -184,43 +192,56 @@ public class MatriculaService {
 
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void validarAlumno(int alu_id,int sec_id) {
+		
 		String sql = """
 			SELECT COUNT(*) cont FROM ALUMNO WHERE alu_id=?			
 		""";
 		int cont = jdbcTemplate.queryForObject(sql, Integer.class, alu_id);
+		
 		if(cont==0) {
 			throw new RuntimeException("El alumno no Existe.");
 		}
+		
 		sql = """
 				SELECT COUNT(*) cont FROM MATRICULA WHERE alu_id=? AND sec_id=?		
 			""";
-			cont = jdbcTemplate.queryForObject(sql, Integer.class, alu_id,sec_id);
-			if(cont!=0) {
-				throw new RuntimeException("El alumno ya se encuentra matriculado en la seccion programada de Id : "+sec_id);
-			}
+		cont = jdbcTemplate.queryForObject(sql, Integer.class, alu_id,sec_id);
+		
+		if(cont!=0) {
+			throw new RuntimeException("El alumno ya se encuentra matriculado en la seccion programada de Id : "+sec_id);
+		}
+			
 	}
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void validarSeccion(int sec_id) {
+		
 		String sql = """
 			SELECT COUNT(*) cont FROM SECCION WHERE sec_id=?			
 		""";
+		
 		int cont = jdbcTemplate.queryForObject(sql, Integer.class, sec_id);
+		
 		if(cont==0) {
 			throw new RuntimeException("La Seccion no existe ");
 		}
+		
 	}
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void validarEmpleado(int emp_id) {
+		
 		String sql = """
 			SELECT COUNT(*) cont  FROM EMPLEADO  WHERE emp_id=?		
 		""";
 		int cont = jdbcTemplate.queryForObject(sql, Integer.class, emp_id);
+		
 		if(cont==0) {
 			throw new RuntimeException("El empleado no existe");
 		}
+		
 	}
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private String validarTipo(String mat_tipo) {
+		
 	    // Convertir a mayúsculas y eliminar espacios en blanco al inicio y final
 	    String tipoMayuscula = mat_tipo.trim().toUpperCase();
 
@@ -229,12 +250,13 @@ public class MatriculaService {
 	        throw new IllegalArgumentException("El tipo de matrícula debe ser BECA, REGULAR o MEDIABECA");
 	    }
 
-	    
 	    return tipoMayuscula;
+	    
 	}
 	
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private String validarFecha(String mat_fecha) {
+		
 	    String fecha_format;
 
 	    // Eliminar espacios en blanco al inicio y al final
@@ -275,14 +297,17 @@ public class MatriculaService {
 
 	    // Si pasa todas las validaciones, procedemos con la conversión
 	    String sql = "SELECT CONVERT(DATETIME, ?, 103) fecha";
+	    
 	    fecha_format = jdbcTemplate.queryForObject(sql, String.class, fechaLimpia);
 
 	    return fecha_format;
+	    
 	}
 
 	
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void validarSeccionAlumno(int alu_id, int sec_id) {
+		
 	    String sql = """
 	        WITH GradoAnterior AS (
 	            SELECT TOP 1 S.grad_id
@@ -296,25 +321,25 @@ public class MatriculaService {
 	        JOIN GradoAnterior GA ON S.grad_id = GA.grad_id OR S.grad_id = GA.grad_id + 1
 	        WHERE S.sec_id = ?; -- Parámetro para ID de la sección
 	    """;
-	    
 	    int cont = jdbcTemplate.queryForObject(sql, Integer.class, alu_id, sec_id);
+	    
 	    if (cont == 0) {
 	        throw new RuntimeException("El alumno solo puede matricularse en el ultimo grado y el que le sigue");
 	    }
+	    
 	}
 	
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private int validarAlumnoNuevo(int alu_id) {
 		
-
 		String sql = """
 				
 				SELECT count (*) cont FROM MATRICULA WHERE  alu_id=?	
 			""";
-			int cont = jdbcTemplate.queryForObject(sql, Integer.class, alu_id);
+		int cont = jdbcTemplate.queryForObject(sql, Integer.class, alu_id);
 
-	    
 	    return cont;
+	    
 	}
 	
 	
@@ -341,9 +366,11 @@ public class MatriculaService {
 	    }
 
 	    return costo;
+	    
 	}
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void validarMatriculaAlumno(int alu_id, int sec_id) {
+		
 	    String sql = """
 	        SELECT COUNT(*) AS existe
 	        FROM MATRICULA M
@@ -357,16 +384,17 @@ public class MatriculaService {
 	              WHERE sec_id = ?
 	          );
 	    """;
-	    
 	    int cont = jdbcTemplate.queryForObject(sql, Integer.class, alu_id, sec_id);
 	    
 	    if (cont > 0) {
 	        throw new RuntimeException("El alumno ya está matriculado en otro grado o sección en este año académico.");
 	    }
+	    
 	}
 
 	@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 	private void validarAnio( int sec_id, String mat_fecha) {
+		
 	    String sql = """
 	        SELECT COUNT(*) AS existe
 	        FROM SECCION S
@@ -374,16 +402,12 @@ public class MatriculaService {
 	        WHERE S.sec_id = ?
 	          AND YEAR(?) BETWEEN YEAR(A.anio_inicio) AND YEAR(A.anio_fin);
 	    """;
-	    
 	    int cont = jdbcTemplate.queryForObject(sql, Integer.class, sec_id, mat_fecha);
-	    
 	    
 	    if (cont == 0) {
 	        throw new RuntimeException("El año de la fecha de matrícula no coincide con el año de la sección seleccionada.");
 	    }
+	    
 	}
-
-
-
 
 }

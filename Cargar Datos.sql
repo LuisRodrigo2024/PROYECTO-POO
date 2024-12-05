@@ -87,13 +87,13 @@ VALUES
 
 
 -- Insertar Empleados
-INSERT INTO EMPLEADO (emp_apellido, emp_nombre, emp_direccion, emp_email, emp_usuario, emp_clave)
+INSERT INTO EMPLEADO (emp_apellido, emp_nombre, emp_dni, emp_direccion, emp_email, emp_usuario, emp_clave)
 VALUES 
-    ('GOMEZ PEREZ', 'CARLOS ALBERTO', 'Av. Los Cedros 145', 'carlos@gcolegio.com', 'cgomez', '92837465'),
-    ('LOPEZ DIAZ', 'ANA MARIA', 'Jr. La Esperanza 231', 'ana@colegio.com', 'alopez', '73529184'),
-    ('MARTINEZ LOPEZ', 'PEDRO', 'Calle Los Tulipanes 678', 'pedro@colegio.com', 'pmartinez', '18273645'),
-    ('FERNANDEZ CASTRO', 'LUCIA CAROLINA', 'Av. Los Pinos 321', 'lucia@colegio.com', 'lfernandez', '64739281'),
-    ('SANCHEZ RAMIREZ', 'JORGE', 'Jr. Los Rosales 555', 'jorge@colegio.com', 'jsanchez', '53928471');
+    ('GOMEZ PEREZ', 'CARLOS ALBERTO', '92837465', 'Av. Los Cedros 145', 'carlos@gcolegio.com', 'cgomez', '987654'),
+    ('LOPEZ DIAZ', 'ANA MARIA', '73529184', 'Jr. La Esperanza 231', 'ana@colegio.com', 'alopez', '876543'),
+    ('MARTINEZ LOPEZ', 'PEDRO', '18273645', 'Calle Los Tulipanes 678', 'pedro@colegio.com', 'pmartinez', '765432'),
+    ('FERNANDEZ CASTRO', 'LUCIA CAROLINA', '64739281', 'Av. Los Pinos 321', 'lucia@colegio.com', 'lfernandez', '654321'),
+    ('SANCHEZ RAMIREZ', 'JORGE', '53928471', 'Jr. Los Rosales 555', 'jorge@colegio.com', 'jsanchez', '543210');
 
 -- Insertar Profesores con nombres y apellidos en mayúsculas y DNIs de 8 dígitos
 INSERT INTO PROFESOR (prof_apellido, prof_nombre, prof_dni, prof_direccion, prof_email, prof_telefono, prof_usuario, prof_clave)

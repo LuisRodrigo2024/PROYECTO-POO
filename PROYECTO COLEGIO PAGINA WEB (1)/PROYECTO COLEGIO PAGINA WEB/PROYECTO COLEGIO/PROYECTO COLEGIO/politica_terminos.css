@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+
+body {
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-image: url("images/perulima.jpg");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    color: #000000;
+    margin: 0;
+    padding-top: 144px;
+}
+
+
+/* ENCABEZADO */
+
+header {
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #fff6c5;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.65);
+}
+
+.encabezado {
+    display: flex;
+    margin: 25px 40px 15px 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CUERPO */
+.relleno {
+    flex: 1; /* Ocupa el espacio restante */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1px;
+    background-color: #00000044;
+    color: #000000;
+    height: calc(100vh - 160px); 
+}
+
+.contenido {
+    margin: 60px auto;
+    padding: 40px 100px 70px;
+    text-align: center;
+    width: 50%;
+    background-color: #ffffff;
+    box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.322);
+    border-radius: 10px;
+    line-height: 1.8;
+}
+
+.contenido h1{
+    color: #AD3636;
+    font-size: 26px;
+}
+
+.contenido h2 {
+    text-align: justify;
+    font-size: 20px;
+}
+
+.contenido p {
+    text-align: justify;
+}
+
+.contenido a {
+    margin: 0 10px;
+    display: inline-block;
+    background-color: #8F2626;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.contenido a:hover {
+    background-color: #eec9c9;
+    color: #570c0c;
+}
+
+
+/* FOOTER */
+
+footer {
+    margin: 0px;
+    padding: 20px 10px 15px;
+    background-color: #340808;
+    color: #ffffff;
+    text-align: center;
+    font-size: 18px;
+    line-height: 10px;
+}
+
+footer p a{
+    text-decoration: none;
+    color: #ffffff;
+}
+
+footer p a:hover{
+    text-decoration: underline;
+    color: #fff1c5;
+}

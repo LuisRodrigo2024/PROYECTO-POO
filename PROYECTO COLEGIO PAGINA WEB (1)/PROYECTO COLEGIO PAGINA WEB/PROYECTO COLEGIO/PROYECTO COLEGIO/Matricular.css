@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #fff7e6, #ffd6a5);
+    color: #333;
+    height: 100vh; /* Ensure full viewport height */
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to right, #ffcc99, #ffaf7a);
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1; /* Ensure header is above sidebar */
+    position: relative;
+}
+
+
+header .logo {
+    height: 100px;
+    margin-right: 20px;
+}
+
+header nav {
+    flex-grow: 1;
+    text-align: right;
+}
+
+header nav a {
+    color: #333;
+    text-decoration: none;
+    margin: 0 15px;
+    margin-right: 70px;
+    font-size: 1.2em;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    width: 100%;
+}
+
+.sidebar {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    display: flex;
+    align-items: center;
+    color: #333;
+    width: 20%;
+    max-width: 200px; /* Adjust max width for better fit */
+    background-color: #ffcc99;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: fixed; /* Make sidebar fixed */
+    top: 0; /* Align to top */
+    height: 100%; /* Full height */
+    z-index: 0; /* Ensure sidebar is below header */
+    padding-top: 140px; /* Adjust for header height */
+}
+
+.sidebar nav a{
+    color: #333;
+    text-decoration: none;
+    margin: 0 15px;
+    margin-top: 0 50px;
+    font-size: 1.2em;
+}
+
+.sidebar .user{
+    height: 50px;
+    margin-bottom: 5px;
+}
+
+.sidebar-button {
+    width: 80%;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #800000;
+    border: none;
+    border-radius: 5px;
+    color: #ddd;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.sidebar-button:hover {
+    background-color: #ffcc99;
+    color: #800000;
+}
+
+.logout {
+    margin-top: auto; /* Pushes this button to the bottom */
+    background-color: #d9534f;
+}
+
+.logout:hover {
+    background-color: #c9302c;
+}
+
+.content {
+    margin-left: 20%; /* Adjust for fixed sidebar width */
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Ensure content is scrollable if too tall */
+    flex: 1; /* Ensure content takes remaining space */
+}
+
+.user-info, .user-books {
+    margin-bottom: 20px;
+}
+  
+.user-info h2 {
+    margin-bottom: 10px;
+}
+
+.user-info form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+ 
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.form-group select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.update-button, .delete-button {
+    padding: 15px;
+    background-color: #800000;
+    color: #ddd;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    flex: 1;
+    text-align: center;
+}
+
+.update-button:hover, .delete-button:hover {
+    background-color: #ffcc99;
+    color: #800000;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    background: linear-gradient(to bottom, #ffcc99, #ffaf7a);
+    color: #333;
+    padding: 10px;
+}
+
+tbody td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.matricular-alumno {
+    margin-bottom: 20px;
+}
+
+.matricular-alumno h2 {
+    margin-bottom: 10px;
+}
+
+.matricular-alumno form {
+    display: flex;
+    flex-direction: column;
+    
+    margin-bottom: 20px;
+}
+
+
+
+.search-button {
+    padding: 15px;
+    background-color: #800000;
+    color: #ddd;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.search-button:hover {
+    background-color: #ffcc99;
+    color: #800000;
+}

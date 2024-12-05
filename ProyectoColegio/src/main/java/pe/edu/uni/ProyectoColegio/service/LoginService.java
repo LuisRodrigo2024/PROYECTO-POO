@@ -12,6 +12,7 @@ public class LoginService {
     private JdbcTemplate jdbcTemplate;
 
     public Map<String, Object> autenticar(String username, String password) {
+    	
         String sql = """
             SELECT emp_id codigo, emp_apellido apellido,emp_nombre nombre, 1 AS posicion
         		FROM EMPLEADO WHERE emp_usuario = ? AND emp_clave = ?
@@ -26,7 +27,9 @@ public class LoginService {
         } catch (Exception e) {
             rec = null;
         }
+        
         return rec;
+        
     }
 }
 

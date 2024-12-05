@@ -14,6 +14,7 @@ public class HorarioService {
 	private JdbcTemplate jdbcTemplate;
 	
 	public List<Map<String,Object>> horario_Seccion(int codigo_seccion){
+		
 		//Variables
 		String sql;
 		

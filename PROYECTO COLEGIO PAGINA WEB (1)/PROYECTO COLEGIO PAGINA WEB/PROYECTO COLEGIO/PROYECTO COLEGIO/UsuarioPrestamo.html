@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Préstamo de Libro</title>
+    <link rel="stylesheet" href="UsuarioPrestamo.css">
+    <link rel="icon" href="img/IconoPag.png" type="image/png">
+</head>
+<body>
+    <header>
+        <img src="img/LogoPag.png" alt="Biblioteca Logo" class="logo">
+        <nav>
+            <a href="#">Inicio</a>
+            <a >Usuario: 10001</a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <button class="sidebar-button"><a href="UsuarioBusqueda.html" style="text-decoration: none; color: inherit;">Busqueda</a></button>
+            <button class="sidebar-button"><a href="UsuarioPrestamo.html" style="text-decoration: none; color: inherit;">Prestamo</a></button>
+            <button class="sidebar-button" ><a href="UsuarioAdeudo.html" style="text-decoration: none; color: inherit;">Adeudo</a></button>
+            <button class="sidebar-button"><a href="UsuarioCuenta.html" style="text-decoration: none; color: inherit;">Cuenta</a></button>
+            <button class="sidebar-button logout">Cerrar Sesión</button>
+            </div>
+        <main class="content">
+            <div class="user-info">
+                <h2>Solicitud de Préstamo de Libro</h2>
+                <form action="submit_loan.php" method="post">
+                    <div class="form-group">
+                        <label for="id_estudiante">ID Estudiante:</label>
+                        <input type="text" id="id_estudiante" name="id_estudiante" value="12345" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_ejemplar">ID Ejemplar:</label>
+                        <input type="text" id="id_ejemplar" name="id_ejemplar" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_prestamo">Tipo de Préstamo:</label>
+                        <select id="tipo_prestamo" name="tipo_prestamo" required>
+                            <option value="">Selecciona el tipo de préstamo</option>
+                            <option value="BIBLIOTECA">BIBLIOTECA</option>
+                            <option value="DOMICILIO">DOMICILIO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_empleado">ID Empleado:</label>
+                        <input type="text" id="id_empleado" name="id_empleado" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre_libro">Nombre del Libro:</label>
+                        <input type="text" id="nombre_libro" name="nombre_libro" required>
+                    </div>
+                    <div class="form-group">
+                        <button class="boton-submit">Enviar Solicitud</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

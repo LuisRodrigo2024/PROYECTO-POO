@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DHORS Alumnos || Inicio</title>
+    <link rel="icon" href="images/IconoPag.png" type="image/png">
+    <link rel="stylesheet" href="Usuario.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!--ENCABEZADO-->
+    <header>
+        <div class="encabezado">
+            <div class="logo">
+                <a href="home.html"><img src="images/LogoPag.png" alt="Biblioteca" height="100px"></a>
+            </div>
+            <nav class="contenedor-encabezado">
+                <ul>
+                    <li><a href="#" id="linkact">INICIO</a></li>
+                    <li><a href="#" id="linkc">USUARIO</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!--CUERPO-->
+    <section class="relleno">
+
+        <div class="barra">
+            <a href="UsuarioBusqueda.html" id="reg">Busqueda Libro</a><br>
+            <a href="UsuarioBusqueda.html" id="reg">Busqueda Ejemplar</a><br>
+            <a href="UsuarioPrestamo.html" id="reg">Prestamo</a><br>
+            <a href="UsuarioAdeudo.html" id="reg">Adeudo</a><br>
+            <a href="UsuarioCuenta.html" id="reg">Cuenta</a><br>
+            <a href="#" id="logout">Cerrar Sesión</a><br>
+        </div>
+
+        <div class="ba">
+            <p>1</p>
+        </div>
+
+        <div class="contenido">
+            <h1>BIENVENIDO A LA BIBLIOTECA VIRTUAL</h1>
+            <hr>
+            <p>Usted se encuentra en su espacio virtual, donde podrá buscar libros, ya sea por su nombre o por ejemplar, solicitar préstamos, ver su cuenta, y más opciones, esperemos que sea de su agrado, y gracias por su confianza en nosotros.</p><br>
+            <img src="https://www.cronista.com/files/image/443/443616/61f5f63a54672.jpg" alt="librospng" height="300">
+        </div>
+    </section>
+
+    <!--FOOTER-->
+    <footer>
+        <p><a href="politicaprivacidad.html" target="_blank">Políticas de privacidad</a> | Términos de uso</p>
+        <p>Lima - Perú | <a href="home.html" target="_blank">Biblioteca Universitaria DHORS</a> | Copyright @2024 | Todos los derechos reservados</p>
+    </footer>
+    
+    <!-- JavaScript para manejar el cierre de sesión -->
+    <script>
+        document.getElementById("logout").addEventListener("click", function(event) {
+            event.preventDefault();
+            cerrarSesion();
+        });
+
+        function cerrarSesion() {
+            const id = localStorage.getItem("id_usuario");
+
+            if (!id) {
+                console.error("No se encontró el id de usuario en localStorage.");
+                return;
+            }
+
+            const usuario = {
+                id: id
+            };
+
+            fetch("http://localhost:8080/biblioteca/CU001/cerrar", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(usuario)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cerrar sesión');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.mensaje);
+                localStorage.removeItem("id_usuario");
+                window.location.href = "home.html";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Hubo un error al cerrar sesión");
+            });
+        }
+    </script>
+</body>
+</html>

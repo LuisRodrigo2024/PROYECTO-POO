@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Recuperar Contraseña - Colegio Habitch</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow">
+    <meta property="og:title" content="Colegio Habitch">
+    <meta name="description" property="og:description" content="Sistema Intranet HABITCH.">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" href="images/Logo_Colegio_Habitch.png" type="image/x-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to right, #939393 50%, #6e1220 50%);
+        }
+        .cls-content-sm {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transform: translateY(100px);
+            opacity: 0;
+            animation: slideUp 1s ease forwards;
+        }
+        h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        p {
+            font-size: 16px;
+            font-weight: 300;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        .form-control {
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .form-control:focus {
+            border-color: #A51C30;
+            box-shadow: 0 0 5px rgba(179, 18, 50, 0.5);
+        }
+        .btn-warning {
+            background-color: #A51C30;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 15px;
+        }
+        .btn-warning:hover {
+            background-color: #A51C30;
+            transform: scale(1.05);
+        }
+        .toggle-password-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto 20px;
+            padding: 8px 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .toggle-password-btn:hover {
+            background-color: #eaeaea;
+            transform: scale(1.05);
+        }
+        .toggle-password-btn i {
+            margin-right: 8px;
+        }
+        .error-message {
+            color: #A51C30;
+            font-size: 13px;
+            margin-bottom: 10px;
+            text-align: left;
+            display: none;
+        }
+        @keyframes slideUp {
+            0% { transform: translateY(100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cls-content-sm">
+        <h3>Recuperar Contraseña</h3>
+        <p>Ingresa tu DNI y correo electrónico para verificar tu cuenta.</p>
+
+        <!-- Formulario de ingreso de DNI y correo -->
+        <form id="dniEmailForm">
+            <div class="form-group">
+                <input type="text" class="form-control" id="dni" placeholder="Ingresa tu DNI" required>
+                <div class="error-message" id="dniError">El DNI es obligatorio</div>
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" id="email" placeholder="Ingresa tu correo" required>
+                <div class="error-message" id="emailError">El correo es obligatorio</div>
+            </div>
+            <button type="submit" class="btn-warning btn-block">Verificar Usuario</button>
+        </form>
+
+        <!-- Formulario para cambiar la contraseña -->
+        <form id="changePasswordForm" style="display:none;">
+            <div class="form-group">
+                <input type="password" class="form-control" id="newPassword" placeholder="Nueva Contraseña" required>
+                <div class="error-message" id="newPasswordError">La nueva contraseña es obligatoria</div>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmar Contraseña" required>
+                <div class="error-message" id="confirmPasswordError">Confirmar contraseña es obligatorio</div>
+            </div>
+            <div class="toggle-password-btn" id="togglePassword">
+                <i class="fas fa-eye"></i> Mostrar Contraseña
+            </div>
+            <button type="submit" class="btn-warning btn-block">Cambiar Contraseña</button>
+        </form>
+    </div>
+    <script>
+
+        // Mostrar/Ocultar contraseña con cambio de texto
+        $('#togglePassword').click(function() {
+            var passwordField = $('#newPassword, #confirmPassword');
+            var isPasswordVisible = passwordField.attr('type') === 'text';
+    
+            passwordField.attr('type', isPasswordVisible ? 'password' : 'text');
+
+        // Cambiar el texto y el icono del botón
+            $(this).html(isPasswordVisible
+            ? '<i class="fa fa-eye"></i> Mostrar Contraseña'
+            : '<i class="fa fa-eye-slash"></i> Ocultar Contraseña');
+        });
+    
+        // Validar el formulario de verificación de usuario
+        $('#dniEmailForm').submit(function(event) {
+            event.preventDefault(); // Prevenir el envío del formulario
+    
+            var dni = $('#dni').val().trim();
+            var email = $('#email').val().trim();
+    
+            var valid = true;
+    
+            // Validar campos vacíos
+            if (!dni) {
+                $('#dniError').show();
+                valid = false;
+            } else {
+                $('#dniError').hide();
+            }
+    
+            if (!email) {
+                $('#emailError').show();
+                valid = false;
+            } else {
+                $('#emailError').hide();
+            }
+    
+            // Si todos los campos están válidos, proceder
+            if (valid) {
+                // Hacer una solicitud POST al backend para verificar los datos
+                $.ajax({
+                    url: 'http://localhost:8080/api/colegio/validar/datos',
+                    method: 'POST',
+                    data: { dni: dni, email: email},
+                    success: function(response) {
+                        $('#dniEmailForm').hide();
+                        $('#changePasswordForm').show();
+                        alert('Usuario verificado correctamente. Ingresa su nueva contraseña.');
+                    },
+                    error: function() {
+                        alert('Error: Los datos proporcionados no coinciden con ningún usuario.');
+                        // Limpiar los campos de usuario y contraseña
+                        // Limpiar los campos de usuario y correo después de un error en la verificación
+                        $('#dni').val('');
+                        $('#email').val('');
+
+                    }
+                });
+            }
+        });
+    
+        // Validar el formulario de cambio de contraseña
+        $('#changePasswordForm').submit(function(event) {
+            event.preventDefault(); // Prevenir el envío del formulario
+    
+            var newPassword = $('#newPassword').val().trim();
+            var confirmPassword = $('#confirmPassword').val().trim();
+    
+            var valid = true;
+    
+            // Validar que los campos de nueva contraseña y confirmar contraseña no estén vacíos
+            if (!newPassword) {
+                $('#newPasswordError').show();
+                valid = false;
+            } else {
+                $('#newPasswordError').hide();
+            }
+    
+            if (!confirmPassword) {
+                $('#confirmPasswordError').show();
+                valid = false;
+            } else {
+                $('#confirmPasswordError').hide();
+            }
+    
+            // Validar que las contraseñas coincidan
+            if (newPassword !== confirmPassword) {
+                alert('Las contraseñas no coinciden. Por favor, intenta nuevamente.');
+                $('#newPassword').val(''); // Limpiar los campos de contraseña
+                $('#confirmPassword').val('');
+                valid = false;
+            }
+    
+            // Si todos los campos están válidos, proceder
+            if (valid) {
+                // Hacer una solicitud POST al backend para actualizar la contraseña
+                $.ajax({
+                    url: 'http://localhost:8080/api/colegio/cambiar/contrasena',
+                    method: 'POST',
+                    data: { dni: $('#dni').val(), email: $('#email').val(), nuevaContrasena: newPassword },
+                    success: function(response) {
+                        alert('Contraseña cambiada con éxito.');
+                        window.location.href = "index.html";
+                    },
+                    error: function() {
+                        alert('Error al cambiar la contraseña. Intenta nuevamente.');
+                        $('#newPassword').val(''); // Limpiar los campos de contraseña
+                        $('#confirmPassword').val('');
+                    }
+                }); 
+            }
+        });
+    </script>
+    </body>
+    </html>
+    
+
+

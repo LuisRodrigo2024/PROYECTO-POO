@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Horario - Biblioteca Universitaria</title>
+    <link rel="stylesheet" href="Horario.css">
+    <link rel="icon" href="img/Logo.png" type="image/png">
+</head>
+ 
+<body>
+    <header>
+        <img src="img/Logo.png" alt="Logo" class="logo">
+        <nav>
+            <a href="home.html" id="linkact">HOME</a>
+            <a href="home.html" id="linkc">¿Quiénes somos?</a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <img src="img/user.svg" alt="User" class="user">
+            <nav>
+                <a>Usuario: xxxxxxx</a>
+            </nav>
+            <button class="sidebar-button"><a href="Matricular.html" style="text-decoration: none; color: inherit;">Matricular</a></button>
+            <button class="sidebar-button"><a href="Horario.html" style="text-decoration: none; color: inherit;">Generar Horario</a></button>
+            <button class="sidebar-button"><a href="Pago.html" style="text-decoration: none; color: inherit;">Realizar Pago</a></button>
+            <button class="sidebar-button logout">Cerrar Sesión</button>
+        </div>
+        <div class="content">
+            <h2>Buscar Horario</h2>
+            <div class="form-group">
+                <label for="sec_id">Sección del alumno:</label>
+                <input type="text" class="form-control" id="sec_id" aria-label="sec_id">
+            </div>
+            <button type="button" class="search-button">Buscar</button>
+            <div id="result" class="mt-3"></div>
+            <table id="horarioTabla">
+                <thead>
+                    <tr>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Lunes</th>
+                        <th>Martes</th>
+                        <th>Miércoles</th>
+                        <th>Jueves</th>
+                        <th>Viernes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Filas dinámicas -->
+                </tbody>
+            </table>
+            <div class="mx-auto p-2" style="width: 200px;">
+                <button type="button" class="search-button" onclick="genPDF()">
+                    Descargar PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Referencias a elementos del DOM
+        const input = document.getElementById('sec_id');
+        const button = document.querySelector('.search-button');
+        const resultDiv = document.getElementById('result');
+        const tablaCuerpo = document.querySelector("#horarioTabla tbody");
+
+        // Llenar tabla con datos de la API
+        function llenarTabla(horario) {
+            tablaCuerpo.innerHTML = '';
+            if (!Array.isArray(horario)) {
+                resultDiv.innerHTML = '<div class="alert alert-danger">Error en los datos recibidos.</div>';
+                return;
+            }
+
+            horario.forEach(item => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td>${item.inicio || 'N/A'}</td>
+                    <td>${item.fin || 'N/A'}</td>
+                    <td>${item.lunes || 'N/A'}</td>
+                    <td>${item.martes || 'N/A'}</td>
+                    <td>${item.miercoles || 'N/A'}</td>
+                    <td>${item.jueves || 'N/A'}</td>
+                    <td>${item.viernes || 'N/A'}</td>
+                `;
+                tablaCuerpo.appendChild(fila);
+            });
+        }
+
+        // Acción al hacer clic en "Buscar"
+        button.addEventListener('click', () => {
+            const secId = input.value.trim();
+            if (!secId) {
+                resultDiv.innerHTML = '<div class="alert alert-warning">Por favor, ingrese un sec_id.</div>';
+                return;
+            }
+            if (!/^\d+$/.test(secId)) {
+                resultDiv.innerHTML = '<div class="alert alert-warning">El ID debe contener solo números.</div>';
+                return;
+            }
+
+            const apiUrl = `http://localhost:8080/api/colegio/horariojson?sec_id=${secId}`  ;
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error(`Error: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => llenarTabla(data))
+                .catch(err => {
+                    console.error(err);
+                    resultDiv.innerHTML = '<div class="alert alert-danger">No se pudo obtener el horario.</div>';
+                });
+                
+        });
+
+        // Generar PDF con jsPDF y autoTable
+        function genPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const tabla = document.getElementById('horarioTabla');
+
+            doc.text("Horario de Sección", 105, 10, { align: "center" });
+            doc.autoTable({ html: tabla, startY: 20, theme: 'grid' });
+            doc.save('Horario.pdf');
+        }
+    </script>
+</body>
+
+</html>

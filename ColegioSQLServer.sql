@@ -59,6 +59,7 @@ CREATE TABLE EMPLEADO (
     emp_id INT PRIMARY KEY IDENTITY(1,1),
     emp_apellido VARCHAR(50) NOT NULL,
     emp_nombre VARCHAR(50) NOT NULL,
+	emp_dni VARCHAR(10) NOT NULL,
     emp_direccion VARCHAR(50) NOT NULL,
     emp_email VARCHAR(50) NOT NULL,
     emp_usuario VARCHAR(20) NOT NULL,

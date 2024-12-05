@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Libros - Biblioteca Universitaria</title>
+    <link rel="stylesheet" href="Matricular.css">
+    <link rel="icon" href="img/Logo.png" type="image/png">
+    <link rel="user" href="img/user.svg" type="image/svg">
+</head>
+
+<body>
+    <header>
+        <img src="img/Logo.png" alt="Logo" class="logo">
+        <nav>
+            <a href="home.html" id="linkact">HOME</a>
+            <a href="home.html" id="linkc">¿Quiénes somos?</a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <img src="img/user.svg" alt="User" class="user">
+            <nav>
+                <a>Usuario: xxxxxxx</a>
+            </nav>
+            <button class="sidebar-button"><a href="Matricular.html"
+                    style="text-decoration: none; color: inherit;">Matricular</a></button>
+            <button class="sidebar-button"><a href="Horario.html" style="text-decoration: none; color: inherit;">Generar
+                    Horario</a></button>
+            <button class="sidebar-button"><a href="Pago.html" style="text-decoration: none; color: inherit;">Realizar
+                    Pago</a></button>
+            <button class="sidebar-button logout">Cerrar Sesión</button>
+        </div>
+        <div class="content">
+            <section class="matricular-alumno">
+                <h2>Matricular Alumno</h2>
+                <form id="search-form">
+                    <div class="form-group">
+                        <div>
+                            <label for="alu_id">ID del Alumno:</label>
+                            <input type="number" id="alu_id" name="alu_id" required>
+                        </div>
+                        <div style="height: 20px; visibility: hidden;"></div>
+                        <div>
+                            <label for="sec_id">ID de Sección:</label>
+                            <input type="number" id="sec_id" name="sec_id" required>
+                        </div>
+                        <div style="height: 20px; visibility: hidden;"></div>
+                        <div>
+                            <label for="emp_id">ID de Empleado:</label>
+                            <input type="number" id="emp_id" name="emp_id" required>
+                        </div>
+                        <div style="height: 20px; visibility: hidden;"></div>
+                        <div>
+                            <label for="mat_tipo">Tipo de Matricula:</label>
+                            <select id="mat_tipo" name="mat_tipo" required>
+                                <option value="BECA">BECA</option>
+                                <option value="MEDIABECA">MEDIABECA</option>
+                                <option value="REGULAR">REGULAR</option>
+                            </select>
+                        </div>
+                        <div style="height: 20px; visibility: hidden;"></div>
+                        <div>
+                            <label for="mat_fecha">Fecha:</label>
+                            <input type="text" id="mat_fecha" name="mat_fecha" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="search-button">Confirmar</button>
+                </form>
+                <div id="resultado"></div>
+                <div class="mx-auto p-2" style="width: 400px;">
+                    <button type="button" class="search-button" onclick="genPDF()">
+                        Descargar Cronograma de Pago
+                    </button>
+                </div>
+                <div id="resultado2"></div>
+            </section>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Función para obtener la fecha actual en formato dd/mm/yyyy
+        function obtenerFechaActual() {
+            const ahora = new Date();
+            const dia = String(ahora.getDate()).padStart(2, '0'); // Asegura dos dígitos
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses comienzan en 0
+            const anio = ahora.getFullYear();
+            return `${dia}/${mes}/${anio}`;
+        }
+        // Manejo del envío del formulario
+        const formulario = document.getElementById('search-form');
+        formulario.addEventListener('submit', function (event) {
+            event.preventDefault(); // Evita el envío predeterminado del formulario
+
+            // Capturar valores de los campos
+            const matFecha = obtenerFechaActual();
+            const datos = {
+                alu_id: parseInt(document.getElementById('alu_id').value.trim(), 10),
+                sec_id: parseInt(document.getElementById('sec_id').value.trim(), 10),
+                emp_id: parseInt(document.getElementById('emp_id').value.trim(), 10),
+                mat_tipo: document.getElementById('mat_tipo').value.trim(),
+                mat_fecha: document.getElementById('mat_fecha').value.trim(),
+            };
+
+
+            // Enviar los datos al servidor
+            const apiUrl = `http://localhost:8080/api/colegio/matricula`;
+            console.log("Datos enviados:", JSON.stringify({ alu_id: datos.alu_id, sec_id: datos.sec_id, emp_id: datos.emp_id, mat_tipo: datos.mat_tipo, mat_fecha: datos.mat_fecha }));
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ alu_id: datos.alu_id, sec_id: datos.sec_id, emp_id: datos.emp_id, mat_tipo: datos.mat_tipo, mat_fecha: datos.mat_fecha })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const resultadoDiv = document.getElementById('resultado'); // Contenedor para mostrar los resultados
+                    resultadoDiv.innerHTML = `
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Alumno ID</th>
+                            <th>Sección ID</th>
+                            <th>Empleado ID</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${data.alu_id}</td>
+                            <td>${data.sec_id}</td>
+                            <td>${data.emp_id}</td>
+                            <td>${data.mat_tipo}</td>
+                            <td>${data.mat_fecha}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>Alumno matriculado exitosamente.</p>
+            `;
+                })
+                .catch(error => {
+                    const resultadoDiv = document.getElementById('resultado');
+                    resultadoDiv.innerHTML = `<p style="color: red;">Error al matricular al alumno: ${error.message}</p>`;
+                });
+        });
+
+        function genPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Capturar el ID del alumno
+            const alu_id = document.getElementById('alu_id').value.trim();
+            if (!alu_id) {
+                alert("Por favor, ingresa un ID de alumno válido.");
+                return;
+            }
+
+            const apiUrl = `http://localhost:8080/api/colegio/json?alu_id=${alu_id}`;
+
+            fetch(apiUrl, { method: 'GET' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response.json(); // Procesar como JSON
+                })
+                .then(data => {
+                    // Crear encabezados de la tabla
+                    const tableHeaders = ["Cuota", "Monto", "Fecha"];
+                    const tableData = data.map(item => [item.cuota, item.monto, item.fecha]);
+
+                    // Agregar título al PDF
+                    doc.setFontSize(14);
+                    doc.text(`Cronograma de Pagos - Alumno ID: ${alu_id}`, 10, 10);
+
+                    // Agregar tabla al PDF
+                    doc.autoTable({
+                        startY: 20,
+                        head: [tableHeaders],
+                        body: tableData,
+                    });
+
+                    // Guardar el archivo PDF
+                    doc.save(`Cronograma_Alumno_${alu_id}.pdf`);
+                })
+                .catch(error => {
+                    const resultadoDiv = document.getElementById('resultado2');
+                    resultadoDiv.innerHTML = `<p style="color: red;">Error al generar el PDF: ${error.message}</p>`;
+                });
+        }
+
+
+    </script>
+</body>
+
+</html>

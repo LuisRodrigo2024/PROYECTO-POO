@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+
+body {
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    background-color: #ffffff;
+    color: #000000;
+    margin: 0;
+    padding-top: 180px;
+}
+
+
+/* ENCABEZADO */
+
+header {
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.65);
+}
+
+.encabezado {
+    display: flex;
+    margin: 25px 40px 15px 40px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contenedor-encabezado ul{
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-left: 50px;
+}
+
+#linkc {
+    text-decoration: none;
+    color: #000000;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#linkact {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+    color: #AD3636;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#linkc:hover {
+    color: #ffaa2a;
+    text-decoration: underline;
+}
+
+
+/* CONTENEDOR */
+
+.container {
+    display: flex;
+    flex: 1;
+    width: 100%;
+}
+
+.sidebar {
+    width: 20%;
+    max-width: 250px; /* Adjust max width for better fit */
+    background-color: #ffcc99;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: fixed; /* Make sidebar fixed */
+    top: 0; /* Align to top */
+    height: 100%; /* Full height */
+    z-index: 0; /* Ensure sidebar is below header */
+    padding-top: 170px; /* Adjust for header height */
+}
+
+.sidebar-button {
+    width: 80%;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #800000;
+    border: none;
+    border-radius: 5px;
+    color: #ddd;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.sidebar-button:hover {
+    background-color: #ffcc99;
+    color: #800000;
+}
+
+.logout {
+    margin-bottom: 10PX; /* Pushes this button to the bottom */
+    background-color: #d9534f;
+}
+
+.logout:hover {
+    background-color: #c9302c;
+}
+
+.content {
+    flex: 1; /* Ensure content takes remaining space */
+    margin-left: 20%; /* Adjust for fixed sidebar width */
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Ensure content is scrollable if too tall */
+}
+
+.user-info, .user-books {
+    margin-bottom: 20px;
+}
+
+.user-info h2 {
+    margin-bottom: 10px;
+}
+
+.user-info form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.update-button, .delete-button {
+    padding: 15px;
+    background-color: #800000;
+    color: #ddd;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    flex: 1;
+    text-align: center;
+}
+
+.update-button:hover, .delete-button:hover {
+    background-color: #ffcc99;
+    color: #800000;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    background: linear-gradient(to bottom, #ffcc99, #ffaf7a);
+    color: #333;
+    padding: 10px;
+}
+
+tbody td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}

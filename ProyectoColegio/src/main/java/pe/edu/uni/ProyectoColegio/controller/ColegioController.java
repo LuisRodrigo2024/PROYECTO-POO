@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pe.edu.uni.ProyectoColegio.dto.CursosProfesorResponse;
 import pe.edu.uni.ProyectoColegio.dto.FechapagoDto;
+import pe.edu.uni.ProyectoColegio.dto.HorarioJsonDto;
 import pe.edu.uni.ProyectoColegio.dto.MatriculaDto;
 import pe.edu.uni.ProyectoColegio.dto.PagoDto;
 import pe.edu.uni.ProyectoColegio.service.ConsultasService;
@@ -24,7 +25,7 @@ import pe.edu.uni.ProyectoColegio.service.HorarioService;
 import pe.edu.uni.ProyectoColegio.service.LoginService;
 import pe.edu.uni.ProyectoColegio.service.MatriculaService;
 import pe.edu.uni.ProyectoColegio.service.PagoService;
-import pe.edu.uni.ProyectoColegio.service.SeguridadService;
+import pe.edu.uni.ProyectoColegio.service.RecuperarContrasenaService;
 
 @RestController
 @RequestMapping("/api/colegio")
@@ -42,10 +43,32 @@ public class ColegioController {
     
     @Autowired
 	private ConsultasService consultasService;
-    @Autowired
-	private SeguridadService seguridadService;
+    
     @Autowired
 	private LoginService loginService;
+    
+    @Autowired
+    private RecuperarContrasenaService recuperarContrasenaService;
+    
+    @PostMapping("/validar/datos")
+    public ResponseEntity<String> cambiarContrasena(@RequestParam String dni, @RequestParam String email) {
+        try {
+            recuperarContrasenaService.validarDatos(dni, email);
+            return ResponseEntity.ok("Datos válidos.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/cambiar/contrasena")
+    public ResponseEntity<String> cambiarContrasena(@RequestParam String dni, @RequestParam String email, @RequestParam String nuevaContrasena) {
+        try {
+            recuperarContrasenaService.cambiarContrasena(dni, email, nuevaContrasena);
+            return ResponseEntity.ok("Contraseña cambiada con éxito.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(String usuario, String clave){
@@ -92,11 +115,11 @@ public class ColegioController {
     
     @GetMapping("/seccion")
     public List<Map<String, Object>> getSecciones(
-        @RequestParam String nombre,  // Parametro nombre (A o B)
-        @RequestParam int grado,     // Parametro grado
-        @RequestParam String fecha   // Parametro fecha
+        @RequestParam String nombre,
+        @RequestParam int grado,
+        @RequestParam String fecha
     ) {
-        return consultasService.idSecAnio(nombre, grado, fecha) ;  // Llamada al servicio
+        return consultasService.idSecAnio(nombre, grado, fecha) ;
     }
     
     @GetMapping("/horario/{codigo}")
@@ -167,15 +190,15 @@ public class ColegioController {
 		}
     }
 	
-	@PostMapping("/logon")
-	public ResponseEntity<?> logon(String usuario, String clave){
-		Map<String,Object> rec = seguridadService.validar(usuario, clave);
-		if(rec!=null) {
-			return ResponseEntity.status(HttpStatus.CREATED).body(rec);
-		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Usuario no existe. ");
+	@GetMapping("/horariojson")
+    public ResponseEntity<?> getHorariosjson(@RequestParam("sec_id")  int sec_id) {
+		List<HorarioJsonDto> reporte;
+        try {
+        	reporte = consultasService.horarioJSON(sec_id);
+        	return ResponseEntity.ok(reporte);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en el proceso: " + e.getMessage());
 		}
-	}
+    }
     
 }
